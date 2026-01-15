@@ -1,0 +1,133 @@
+import type { DragEvent } from "react";
+import {
+  Image as ImageIcon,
+  LayoutGrid,
+  LayoutPanelTop,
+  Type,
+} from "lucide-react";
+
+import type { BlockDSL, BlockType } from "../../lib/editor";
+import { FOOTER_DSL } from "../../lib/editor";
+import { useEditor } from "./EditorProvider";
+
+type BlockPaletteItem =
+  | {
+      kind: "block";
+      type: BlockType;
+      label: string;
+      description: string;
+      icon: typeof ImageIcon;
+    }
+  | {
+      kind: "dsl";
+      dsl: BlockDSL;
+      label: string;
+      description: string;
+      icon: typeof ImageIcon;
+    };
+
+const blocks: BlockPaletteItem[] = [
+  {
+    kind: "block",
+    type: "section",
+    label: "Section",
+    description: "Background and spacing",
+    icon: LayoutPanelTop,
+  },
+  {
+    kind: "block",
+    type: "layout-2",
+    label: "2 Columns",
+    description: "Two-column layout",
+    icon: LayoutGrid,
+  },
+  {
+    kind: "block",
+    type: "layout-3",
+    label: "3 Columns",
+    description: "Three-column layout",
+    icon: LayoutGrid,
+  },
+  {
+    kind: "block",
+    type: "text",
+    label: "Text",
+    description: "Heading or paragraph",
+    icon: Type,
+  },
+  {
+    kind: "block",
+    type: "image",
+    label: "Image",
+    description: "Image with alt text",
+    icon: ImageIcon,
+  },
+  {
+    kind: "dsl",
+    dsl: FOOTER_DSL,
+    label: "Footer",
+    description: "Compound footer block",
+    icon: LayoutPanelTop,
+  },
+];
+
+export default function BlocksPanel() {
+  const { addBlock, addDslBlocks } = useEditor();
+
+  const handleDragStart = (event: DragEvent, item: BlockPaletteItem) => {
+    if (item.kind === "dsl") {
+      event.dataTransfer.setData(
+        "application/x-block-dsl",
+        JSON.stringify(item.dsl)
+      );
+    } else {
+      event.dataTransfer.setData("application/x-block-type", item.type);
+    }
+    event.dataTransfer.effectAllowed = "copy";
+  };
+
+  return (
+    <div className="h-full flex flex-col gap-4">
+      <div>
+        <h2 className="text-sm font-semibold text-slate-200 uppercase tracking-wide">
+          Blocks
+        </h2>
+        <p className="text-xs text-slate-400 mt-1">
+          Drag blocks into the preview
+        </p>
+      </div>
+
+      <div className="flex flex-col gap-3">
+        {blocks.map((block) => {
+          const Icon = block.icon;
+          return (
+            <button
+              key={block.kind === "dsl" ? block.label : block.type}
+              type="button"
+              draggable
+              onDragStart={(event) => handleDragStart(event, block)}
+              onClick={() =>
+                block.kind === "dsl"
+                  ? addDslBlocks(block.dsl)
+                  : addBlock(block.type)
+              }
+              className="group flex items-center gap-3 rounded-xl border border-slate-700 bg-slate-900/60 p-3 text-left transition hover:border-cyan-500 hover:bg-slate-900"
+            >
+              <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-800 text-cyan-400">
+                <Icon size={20} />
+              </span>
+              <span className="flex flex-col">
+                <span className="text-sm font-medium text-slate-100">
+                  {block.label}
+                </span>
+                <span className="text-xs text-slate-400">
+                  {block.description}
+                </span>
+              </span>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
