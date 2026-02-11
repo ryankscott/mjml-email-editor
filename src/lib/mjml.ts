@@ -1,5 +1,6 @@
 import mjml2html from "mjml-browser";
 
+import type { Brand } from "./brand";
 import type { Block } from "./editor";
 import { buildMjml } from "./editor";
 
@@ -31,6 +32,9 @@ export function compileMjml(mjml: string): CompileResult {
   }
 }
 
-export function compileBlocks(blocks: Block[]): CompileResult {
-  return compileMjml(buildMjml(blocks));
+export function compileBlocks(
+  blocks: Block[],
+  brand?: Brand | null
+): CompileResult {
+  return compileMjml(buildMjml(blocks, brand));
 }

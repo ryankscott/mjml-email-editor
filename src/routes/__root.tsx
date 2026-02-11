@@ -6,7 +6,8 @@ import {
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { TanStackDevtools } from "@tanstack/react-devtools";
 
-import Header from "../components/Header";
+import { BrandProvider } from "../components/editor/BrandProvider";
+import { EditorProvider } from "../components/editor/EditorProvider";
 
 import TanStackQueryDevtools from "../integrations/tanstack-query/devtools";
 
@@ -18,29 +19,24 @@ interface MyRouterContext {
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
   component: () => {
-    const pathname = useRouterState({
-      select: (state) => state.location.pathname,
-    });
-
-    const hideHeader = pathname.startsWith("/editor");
-
     return (
-      <>
-        {hideHeader ? null : <Header />}
-        <Outlet />
-        <TanStackDevtools
-          config={{
-            position: "bottom-right",
-          }}
-          plugins={[
-            {
-              name: "Tanstack Router",
-              render: <TanStackRouterDevtoolsPanel />,
-            },
-            TanStackQueryDevtools,
-          ]}
-        />
-      </>
+      <BrandProvider>
+        <EditorProvider>
+          <Outlet />
+          <TanStackDevtools
+            config={{
+              position: "bottom-right",
+            }}
+            plugins={[
+              {
+                name: "Tanstack Router",
+                render: <TanStackRouterDevtoolsPanel />,
+              },
+              TanStackQueryDevtools,
+            ]}
+          />
+        </EditorProvider>
+      </BrandProvider>
     );
   },
 });

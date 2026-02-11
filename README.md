@@ -29,6 +29,10 @@ npm run test
 
 This project uses [Tailwind CSS](https://tailwindcss.com/) for styling.
 
+## Data Formats
+
+Template and block JSON formats are documented in [docs/template-format.md](docs/template-format.md).
+
 
 
 ## Shadcn

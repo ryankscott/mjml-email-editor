@@ -27,8 +27,9 @@ type BlockTarget = {
 };
 
 type EditorAction =
-  | { type: "add-block"; blockType: BlockType; target?: BlockTarget }
+  | { type: "add-block"; block: Block; target?: BlockTarget }
   | { type: "add-dsl"; dsl: BlockDSL; target?: BlockTarget }
+  | { type: "replace-blocks"; blocks: Block[] }
   | { type: "select-block"; blockId: string | null }
   | { type: "update-block"; blockId: string; data: Partial<BlockData> }
   | { type: "remove-block"; blockId: string }
@@ -217,7 +218,7 @@ function insertBlocksAt(
 function editorReducer(state: EditorState, action: EditorAction): EditorState {
   switch (action.type) {
     case "add-block": {
-      const block = createBlock(action.blockType);
+      const block = action.block;
       const nextBlocks = action.target
         ? insertBlockAt(state.blocks, block, action.target)
         : [...state.blocks, block];
@@ -239,6 +240,13 @@ function editorReducer(state: EditorState, action: EditorAction): EditorState {
         ...state,
         blocks: nextBlocks,
         selectedId: expanded[0]?.id ?? state.selectedId,
+      };
+    }
+    case "replace-blocks": {
+      return {
+        ...state,
+        blocks: action.blocks,
+        selectedId: action.blocks[0]?.id ?? null,
       };
     }
     case "select-block":
@@ -340,8 +348,9 @@ function editorReducer(state: EditorState, action: EditorAction): EditorState {
 
 type EditorContextValue = {
   state: EditorState;
-  addBlock: (blockType: BlockType, target?: BlockTarget) => void;
+  addBlock: (blockType: BlockType, target?: BlockTarget) => string;
   addDslBlocks: (dsl: BlockDSL, target?: BlockTarget) => void;
+  replaceBlocks: (blocks: Block[]) => void;
   selectBlock: (blockId: string | null) => void;
   updateBlock: (blockId: string, data: Partial<BlockData>) => void;
   removeBlock: (blockId: string) => void;
@@ -357,9 +366,13 @@ export function EditorProvider({ children }: { children: ReactNode }) {
   const value = useMemo<EditorContextValue>(
     () => ({
       state,
-      addBlock: (blockType, target) =>
-        dispatch({ type: "add-block", blockType, target }),
+      addBlock: (blockType, target) => {
+        const block = createBlock(blockType);
+        dispatch({ type: "add-block", block, target });
+        return block.id;
+      },
       addDslBlocks: (dsl, target) => dispatch({ type: "add-dsl", dsl, target }),
+      replaceBlocks: (blocks) => dispatch({ type: "replace-blocks", blocks }),
       selectBlock: (blockId) => dispatch({ type: "select-block", blockId }),
       updateBlock: (blockId, data) =>
         dispatch({ type: "update-block", blockId, data }),

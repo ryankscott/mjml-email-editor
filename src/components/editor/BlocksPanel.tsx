@@ -1,8 +1,10 @@
 import type { DragEvent } from "react";
 import {
+  Code2,
   Image as ImageIcon,
   LayoutGrid,
   LayoutPanelTop,
+  Minus,
   Type,
 } from "lucide-react";
 
@@ -63,6 +65,20 @@ const blocks: BlockPaletteItem[] = [
     icon: ImageIcon,
   },
   {
+    kind: "block",
+    type: "divider",
+    label: "Divider",
+    description: "Horizontal rule",
+    icon: Minus,
+  },
+  {
+    kind: "block",
+    type: "html",
+    label: "HTML",
+    description: "Raw HTML section",
+    icon: Code2,
+  },
+  {
     kind: "dsl",
     dsl: FOOTER_DSL,
     label: "Footer",
@@ -89,10 +105,10 @@ export default function BlocksPanel() {
   return (
     <div className="h-full flex flex-col gap-4">
       <div>
-        <h2 className="text-sm font-semibold text-slate-200 uppercase tracking-wide">
+        <h2 className="text-sm font-semibold text-slate-700 uppercase tracking-wide">
           Blocks
         </h2>
-        <p className="text-xs text-slate-400 mt-1">
+        <p className="text-xs text-slate-500 mt-1">
           Drag blocks into the preview
         </p>
       </div>
@@ -111,16 +127,16 @@ export default function BlocksPanel() {
                   ? addDslBlocks(block.dsl)
                   : addBlock(block.type)
               }
-              className="group flex items-center gap-3 rounded-xl border border-slate-700 bg-slate-900/60 p-3 text-left transition hover:border-cyan-500 hover:bg-slate-900"
+              className="group flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-3 text-left shadow-sm transition hover:border-cyan-400 hover:bg-slate-50"
             >
-              <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-800 text-cyan-400">
+              <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-100 text-cyan-700">
                 <Icon size={20} />
               </span>
               <span className="flex flex-col">
-                <span className="text-sm font-medium text-slate-100">
+                <span className="text-sm font-medium text-slate-900">
                   {block.label}
                 </span>
-                <span className="text-xs text-slate-400">
+                <span className="text-xs text-slate-500">
                   {block.description}
                 </span>
               </span>

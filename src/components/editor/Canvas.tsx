@@ -39,14 +39,14 @@ function BlockCard({ block, index }: { block: Block; index: number }) {
       className={`flex items-center justify-between rounded-xl border px-4 py-3 transition ${
         isSelected
           ? "border-cyan-400 bg-cyan-500/10"
-          : "border-slate-700 bg-slate-900/60 hover:border-slate-500"
+          : "border-slate-200 bg-white hover:border-slate-300"
       }`}
     >
       <div className="flex flex-col">
-        <span className="text-sm font-semibold text-slate-100 capitalize">
+        <span className="text-sm font-semibold text-slate-900 capitalize">
           {block.type}
         </span>
-        <span className="text-xs text-slate-400">Block ID: {block.id}</span>
+        <span className="text-xs text-slate-500">Block ID: {block.id}</span>
       </div>
       <button
         type="button"
@@ -54,7 +54,7 @@ function BlockCard({ block, index }: { block: Block; index: number }) {
           event.stopPropagation();
           removeBlock(block.id);
         }}
-        className="rounded-lg p-2 text-slate-400 transition hover:bg-slate-800 hover:text-slate-200"
+        className="rounded-lg p-2 text-slate-500 transition hover:bg-slate-100 hover:text-slate-700"
         aria-label="Delete block"
       >
         <Trash2 size={16} />
@@ -84,11 +84,11 @@ export default function Canvas() {
     <div
       onDragOver={(event) => event.preventDefault()}
       onDrop={handleDrop}
-      className="flex h-full flex-col gap-4 overflow-y-auto rounded-2xl border border-dashed border-slate-700 bg-slate-950/40 p-6"
+      className="flex h-full flex-col gap-4 overflow-y-auto rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-6"
     >
       {state.blocks.length === 0 ? (
-        <div className="flex flex-1 flex-col items-center justify-center gap-2 text-center text-slate-400">
-          <p className="text-sm font-semibold text-slate-200">Empty canvas</p>
+        <div className="flex flex-1 flex-col items-center justify-center gap-2 text-center text-slate-500">
+          <p className="text-sm font-semibold text-slate-900">Empty canvas</p>
           <p className="text-xs">Drag blocks here to start building.</p>
         </div>
       ) : (
