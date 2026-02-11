@@ -223,10 +223,6 @@ export function expandDsl(dsl: BlockDSL): Block[] {
   return blocks.map((block) => ({ ...block, dsl }));
 }
 
-function isBlockTypeAllowedInColumn(blockType: BlockType) {
-  return blockType === "text" || blockType === "image";
-}
-
 function buildTextAttributesMap(data: TextData, brand?: Brand | null) {
   const resolved = resolveTextStyle(data, brand);
   const attributes: Record<string, string> = {
@@ -287,7 +283,10 @@ function blockToMjmlJsonInColumn(
   };
 }
 
-export function blockToMjmlJson(block: Block, brand?: Brand | null) {
+export function blockToMjmlJson(
+  block: Block,
+  brand?: Brand | null,
+): MjmlJsonNode {
   if (block.type === "section") {
     const data = block.data as SectionData;
     return {
@@ -421,8 +420,11 @@ export function blockToMjmlJson(block: Block, brand?: Brand | null) {
   } satisfies MjmlJsonNode;
 }
 
-export function buildMjmlJson(blocks: Block[], brand?: Brand | null) {
-  const bodyChildren = blocks.length
+export function buildMjmlJson(
+  blocks: Block[],
+  brand?: Brand | null,
+): MjmlJsonNode {
+  const bodyChildren: MjmlJsonNode[] = blocks.length
     ? blocks.map((block) => blockToMjmlJson(block, brand))
     : [
         {

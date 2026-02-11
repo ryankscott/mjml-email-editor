@@ -1,4 +1,14 @@
-import type { Block, BlockDSL, BlockType, LayoutData } from "./editor";
+import type {
+  Block,
+  BlockDSL,
+  BlockType,
+  DividerData,
+  HtmlData,
+  ImageData,
+  LayoutData,
+  SectionData,
+  TextData,
+} from "./editor";
 import { buildMjml, buildMjmlJson, createBlock, mjmlJsonToBlocks } from "./editor";
 import type { MjmlJsonNode } from "./mjmlJson";
 import { normalizeMjmlNode } from "./mjmlJson";
@@ -260,19 +270,21 @@ function sanitizeBlock(
   let sanitizedData = base.data;
 
   if (type === "section") {
+    const baseData = base.data as SectionData;
     sanitizedData = {
       backgroundColor: coerceString(
         data.backgroundColor,
-        base.data.backgroundColor
+        baseData.backgroundColor
       ),
-      padding: coerceString(data.padding, base.data.padding),
+      padding: coerceString(data.padding, baseData.padding),
     };
   } else if (type === "text") {
+    const baseData = base.data as TextData;
     sanitizedData = {
-      content: coerceString(data.content, base.data.content),
-      color: coerceString(data.color, base.data.color),
-      fontSize: coerceString(data.fontSize, base.data.fontSize),
-      align: coerceAlign(data.align, base.data.align),
+      content: coerceString(data.content, baseData.content),
+      color: coerceString(data.color, baseData.color),
+      fontSize: coerceString(data.fontSize, baseData.fontSize),
+      align: coerceAlign(data.align, baseData.align),
       textStyle: coerceTextStyle(data.textStyle),
       colorToken: coerceOptionalString(data.colorToken),
       fontFamily: coerceOptionalString(data.fontFamily),
@@ -280,10 +292,11 @@ function sanitizeBlock(
       lineHeight: coerceOptionalString(data.lineHeight),
     };
   } else if (type === "image") {
+    const baseData = base.data as ImageData;
     sanitizedData = {
-      src: coerceString(data.src, base.data.src),
-      alt: coerceString(data.alt, base.data.alt),
-      width: coerceString(data.width, base.data.width),
+      src: coerceString(data.src, baseData.src),
+      alt: coerceString(data.alt, baseData.alt),
+      width: coerceString(data.width, baseData.width),
       assetId: coerceOptionalString(data.assetId),
     };
   } else if (type === "layout-2" || type === "layout-3") {
@@ -324,12 +337,7 @@ function sanitizeBlock(
       columnBlocks,
     };
   } else if (type === "divider") {
-    const baseData = base.data as {
-      borderColor: string;
-      borderWidth: string;
-      borderStyle: string;
-      padding: string;
-    };
+    const baseData = base.data as DividerData;
     sanitizedData = {
       borderColor: coerceString(data.borderColor, baseData.borderColor),
       borderWidth: coerceString(data.borderWidth, baseData.borderWidth),
@@ -337,7 +345,7 @@ function sanitizeBlock(
       padding: coerceString(data.padding, baseData.padding),
     };
   } else if (type === "html") {
-    const baseData = base.data as { content: string };
+    const baseData = base.data as HtmlData;
     sanitizedData = {
       content: coerceString(data.content, baseData.content),
     };

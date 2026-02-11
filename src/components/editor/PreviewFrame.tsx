@@ -1,4 +1,4 @@
-import type { DragEvent } from "react";
+import type { CSSProperties, DragEvent } from "react";
 import { useMemo, useRef, useState } from "react";
 import {
   ChevronDown,
@@ -667,7 +667,7 @@ function BlockRow({
           style={{
             borderTopColor: data.borderColor,
             borderTopWidth: data.borderWidth,
-            borderTopStyle: data.borderStyle,
+            borderTopStyle: data.borderStyle as CSSProperties["borderTopStyle"],
             padding: data.padding,
           }}
         />

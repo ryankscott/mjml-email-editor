@@ -95,21 +95,19 @@ function readLibrary(): TemplateLibrary {
       writeLibrary(seeded);
       return seeded;
     }
-    const parsed = JSON.parse(raw) as TemplateLibrary;
-    if (!parsed || !Array.isArray(parsed.templates)) {
+    const parsed = JSON.parse(raw) as unknown;
+    if (!isPlainObject(parsed) || !Array.isArray(parsed.templates)) {
       return { schemaVersion: TEMPLATE_SCHEMA_VERSION, templates: [] };
     }
-    if (
-      parsed.schemaVersion !== 1 &&
-      parsed.schemaVersion !== TEMPLATE_SCHEMA_VERSION
-    ) {
+    const schemaVersion = parsed.schemaVersion;
+    if (schemaVersion !== 1 && schemaVersion !== TEMPLATE_SCHEMA_VERSION) {
       return { schemaVersion: TEMPLATE_SCHEMA_VERSION, templates: [] };
     }
     const templates = parsed.templates
       .map((entry) => coerceStoredTemplate(entry))
       .filter(Boolean) as Template[];
     const library = { schemaVersion: TEMPLATE_SCHEMA_VERSION, templates };
-    if (parsed.schemaVersion === 1) {
+    if (schemaVersion === 1) {
       writeLibrary(library);
     }
     return library;
@@ -123,6 +121,10 @@ function writeLibrary(library: TemplateLibrary) {
     return;
   }
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(library));
+}
+
+function isPlainObject(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
 function buildSeedLibrary(): TemplateLibrary {
