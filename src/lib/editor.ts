@@ -115,7 +115,7 @@ const defaultDivider: DividerData = {
 };
 
 const defaultHtml: HtmlData = {
-  content: "<div style=\"text-align:center\">Custom HTML</div>",
+  content: '<div style="text-align:center">Custom HTML</div>',
 };
 
 const defaultDataByType: Record<BlockType, BlockData> = {
@@ -260,7 +260,7 @@ function buildPlaceholderText() {
 
 function blockToMjmlJsonInColumn(
   block: Block,
-  brand?: Brand | null
+  brand?: Brand | null,
 ): MjmlJsonNode {
   if (block.type === "text") {
     const data = block.data as TextData;
@@ -484,7 +484,10 @@ function isTextStyleId(value: string) {
   );
 }
 
-function coerceAlign(value: string | undefined, fallback: "left" | "center" | "right") {
+function coerceAlign(
+  value: string | undefined,
+  fallback: "left" | "center" | "right",
+) {
   if (value === "left" || value === "center" || value === "right") {
     return value;
   }
@@ -538,15 +541,15 @@ function dividerNodeToBlock(node: MjmlJsonNode): Block {
   const data = block.data as DividerData;
   data.borderColor = coerceString(
     nodeAttribute(node, "border-color"),
-    data.borderColor
+    data.borderColor,
   );
   data.borderWidth = coerceString(
     nodeAttribute(node, "border-width"),
-    data.borderWidth
+    data.borderWidth,
   );
   data.borderStyle = coerceString(
     nodeAttribute(node, "border-style"),
-    data.borderStyle
+    data.borderStyle,
   );
   data.padding = coerceString(nodeAttribute(node, "padding"), data.padding);
   return block;
@@ -561,7 +564,7 @@ function rawNodeToBlock(node: MjmlJsonNode): Block {
 
 function sectionNodeToBlocks(
   section: MjmlJsonNode,
-  path: string
+  path: string,
 ): { blocks: Block[]; warnings: string[] } {
   const warnings: string[] = [];
   const children = section.children ?? [];
@@ -570,7 +573,7 @@ function sectionNodeToBlocks(
     .filter((child) => child.tagName !== "mj-column")
     .forEach((child, index) => {
       warnings.push(
-        `${path}.children[${index}] is "${child.tagName}" and was dropped.`
+        `${path}.children[${index}] is "${child.tagName}" and was dropped.`,
       );
     });
   if (!columns.length) {
@@ -579,9 +582,12 @@ function sectionNodeToBlocks(
     const data = block.data as SectionData;
     data.backgroundColor = coerceString(
       nodeAttribute(section, "background-color"),
-      data.backgroundColor
+      data.backgroundColor,
     );
-    data.padding = coerceString(nodeAttribute(section, "padding"), data.padding);
+    data.padding = coerceString(
+      nodeAttribute(section, "padding"),
+      data.padding,
+    );
     return { blocks: [block], warnings };
   }
 
@@ -590,9 +596,12 @@ function sectionNodeToBlocks(
     const data = block.data as LayoutData;
     data.backgroundColor = coerceString(
       nodeAttribute(section, "background-color"),
-      data.backgroundColor
+      data.backgroundColor,
     );
-    data.padding = coerceString(nodeAttribute(section, "padding"), data.padding);
+    data.padding = coerceString(
+      nodeAttribute(section, "padding"),
+      data.padding,
+    );
 
     data.columnBlocks = columns.map((column, columnIndex) => {
       const columnBlocks: Block[] = [];
@@ -603,7 +612,7 @@ function sectionNodeToBlocks(
           columnBlocks.push(imageNodeToBlock(child));
         } else {
           warnings.push(
-            `${path}.columns[${columnIndex}][${childIndex}] has unsupported tag "${child.tagName}" and was dropped.`
+            `${path}.columns[${columnIndex}][${childIndex}] has unsupported tag "${child.tagName}" and was dropped.`,
           );
         }
       });
@@ -634,7 +643,7 @@ function sectionNodeToBlocks(
         return;
       }
       warnings.push(
-        `${path}.column[${childIndex}] has unsupported tag "${child.tagName}" and was dropped.`
+        `${path}.column[${childIndex}] has unsupported tag "${child.tagName}" and was dropped.`,
       );
     });
 
@@ -644,11 +653,11 @@ function sectionNodeToBlocks(
       const data = block.data as SectionData;
       data.backgroundColor = coerceString(
         nodeAttribute(section, "background-color"),
-        data.backgroundColor
+        data.backgroundColor,
       );
       data.padding = coerceString(
         nodeAttribute(section, "padding"),
-        data.padding
+        data.padding,
       );
       return { blocks: [block], warnings };
     }
@@ -658,7 +667,7 @@ function sectionNodeToBlocks(
     }
 
     warnings.push(
-      `${path} has multiple column children; section attributes were dropped.`
+      `${path} has multiple column children; section attributes were dropped.`,
     );
     return { blocks: leafBlocks, warnings };
   }
@@ -667,9 +676,10 @@ function sectionNodeToBlocks(
   return { blocks: [], warnings };
 }
 
-export function mjmlJsonToBlocks(
-  root: BlockDSL
-): { blocks: Block[]; warnings: string[] } {
+export function mjmlJsonToBlocks(root: BlockDSL): {
+  blocks: Block[];
+  warnings: string[];
+} {
   const warnings: string[] = [];
   const normalized = normalizeMjmlNode(root);
   if (!normalized) {
@@ -680,7 +690,7 @@ export function mjmlJsonToBlocks(
 
   if (normalized.tagName === "mjml") {
     const body = (normalized.children ?? []).find(
-      (child) => child.tagName === "mj-body"
+      (child) => child.tagName === "mj-body",
     );
     if (!body) {
       warnings.push("MJML root missing mj-body; no blocks generated.");
@@ -692,7 +702,7 @@ export function mjmlJsonToBlocks(
         return;
       }
       warnings.push(
-        `mj-body child at index ${index} is "${child.tagName}" and was dropped.`
+        `mj-body child at index ${index} is "${child.tagName}" and was dropped.`,
       );
     });
   } else if (normalized.tagName === "mj-body") {
@@ -702,14 +712,14 @@ export function mjmlJsonToBlocks(
         return;
       }
       warnings.push(
-        `mj-body child at index ${index} is "${child.tagName}" and was dropped.`
+        `mj-body child at index ${index} is "${child.tagName}" and was dropped.`,
       );
     });
   } else if (normalized.tagName === "mj-section") {
     sections.push(normalized);
   } else {
     warnings.push(
-      `Root tag "${normalized.tagName}" is not supported for block expansion.`
+      `Root tag "${normalized.tagName}" is not supported for block expansion.`,
     );
     return { blocks: [], warnings };
   }

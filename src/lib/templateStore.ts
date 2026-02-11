@@ -99,7 +99,10 @@ function readLibrary(): TemplateLibrary {
     if (!parsed || !Array.isArray(parsed.templates)) {
       return { schemaVersion: TEMPLATE_SCHEMA_VERSION, templates: [] };
     }
-    if (parsed.schemaVersion !== 1 && parsed.schemaVersion !== TEMPLATE_SCHEMA_VERSION) {
+    if (
+      parsed.schemaVersion !== 1 &&
+      parsed.schemaVersion !== TEMPLATE_SCHEMA_VERSION
+    ) {
       return { schemaVersion: TEMPLATE_SCHEMA_VERSION, templates: [] };
     }
     const templates = parsed.templates

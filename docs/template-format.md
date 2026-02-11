@@ -151,15 +151,15 @@ Template creation and parsing live in `src/lib/templates.ts`.
 
 ### MJML Component Mapping
 
-| Block type | `meta.mjmlComponent` | Notes |
-| --- | --- | --- |
-| `section` | `mj-section` | Always emits a single column placeholder. |
-| `text` | `mj-text` | Compiled inside a section + column. |
-| `image` | `mj-image` | Compiled inside a section + column. |
-| `layout-2` | `mj-section` | Emits two `mj-column` children. |
-| `layout-3` | `mj-section` | Emits three `mj-column` children. |
-| `divider` | `mj-divider` | Compiled inside a section + column. |
-| `html` | `mj-raw` | Compiled inside a section + column. |
+| Block type | `meta.mjmlComponent` | Notes                                     |
+| ---------- | -------------------- | ----------------------------------------- |
+| `section`  | `mj-section`         | Always emits a single column placeholder. |
+| `text`     | `mj-text`            | Compiled inside a section + column.       |
+| `image`    | `mj-image`           | Compiled inside a section + column.       |
+| `layout-2` | `mj-section`         | Emits two `mj-column` children.           |
+| `layout-3` | `mj-section`         | Emits three `mj-column` children.         |
+| `divider`  | `mj-divider`         | Compiled inside a section + column.       |
+| `html`     | `mj-raw`             | Compiled inside a section + column.       |
 
 ### Block Examples
 
