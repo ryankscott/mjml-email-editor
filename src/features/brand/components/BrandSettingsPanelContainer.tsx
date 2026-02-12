@@ -1,5 +1,17 @@
 import { useEffect, useMemo, useState } from "react";
 
+import {
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import type { Brand, TextStyle } from "@/lib/brand";
 import { DEFAULT_TEXT_STYLES } from "@/lib/brand";
 import { useBrand } from "@/components/editor/BrandProvider";
@@ -20,6 +32,7 @@ export default function BrandSettingsPanelContainer() {
   } = useBrand();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [expandedStyleId, setExpandedStyleId] = useState<string | null>(null);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
 
   useEffect(() => {
     if (activeBrandId) {
@@ -54,11 +67,8 @@ export default function BrandSettingsPanelContainer() {
   };
 
   const handleDelete = async (id: string) => {
-    const confirmed = window.confirm("Delete this brand?");
-    if (!confirmed) {
-      return;
-    }
     await deleteBrand(id);
+    setDeleteConfirmOpen(false);
   };
 
   const handleAddColor = (brand: Brand) => {
@@ -133,13 +143,13 @@ export default function BrandSettingsPanelContainer() {
   const rightPane = selectedBrand ? (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-2">
-        <label className="text-xs font-semibold text-slate-600">Brand name</label>
-        <input
+        <Label htmlFor="brand-name">Brand name</Label>
+        <Input
+          id="brand-name"
           value={selectedBrand.name}
           onChange={(event) =>
             void handleUpdate({ ...selectedBrand, name: event.target.value })
           }
-          className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900"
         />
       </div>
 
@@ -167,27 +177,59 @@ export default function BrandSettingsPanelContainer() {
   );
 
   return (
-    <div className="grid gap-6 md:grid-cols-[260px_1fr]">
-      <BrandListPane
-        brands={brands}
-        selectedId={selectedId}
-        activeBrandId={activeBrandId}
-        onSelect={setSelectedId}
-        onCreate={handleCreate}
-        onSetActive={() => {
-          if (selectedBrand) {
-            void setActiveBrandId(selectedBrand.id);
-          }
-        }}
-        onDelete={() => {
-          if (selectedBrand) {
-            void handleDelete(selectedBrand.id);
-          }
-        }}
-        canManageSelection={Boolean(selectedBrand)}
-      />
+    <>
+      <div className="grid gap-6 md:grid-cols-[260px_1fr]">
+        <BrandListPane
+          brands={brands}
+          selectedId={selectedId}
+          activeBrandId={activeBrandId}
+          onSelect={setSelectedId}
+          onCreate={handleCreate}
+          onSetActive={() => {
+            if (selectedBrand) {
+              void setActiveBrandId(selectedBrand.id);
+            }
+          }}
+          onDelete={() => {
+            setDeleteConfirmOpen(true);
+          }}
+          canManageSelection={Boolean(selectedBrand)}
+        />
 
-      {rightPane}
-    </div>
+        {rightPane}
+      </div>
+
+      <AlertDialog
+        open={deleteConfirmOpen}
+        onOpenChange={setDeleteConfirmOpen}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete brand</AlertDialogTitle>
+          </AlertDialogHeader>
+          <AlertDialogBody>
+            <AlertDialogDescription>
+              Delete this brand?
+            </AlertDialogDescription>
+          </AlertDialogBody>
+          <AlertDialogFooter>
+            <Button variant="pillNeutral" size="pill" onClick={() => setDeleteConfirmOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              variant="pillDanger"
+              size="pill"
+              onClick={() => {
+                if (selectedBrand) {
+                  void handleDelete(selectedBrand.id);
+                }
+              }}
+            >
+              Delete brand
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 }

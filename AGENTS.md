@@ -45,6 +45,20 @@ Available scripts:
 - Implement proper ARIA labels for accessibility
 - Test across different viewport sizes
 
+#### shadcn UI Usage (Required)
+- Use shadcn-style components from `/src/components/ui/` as the default for UI controls and overlays
+- Prefer imports from `@/components/ui/*` over raw HTML controls for app UI
+- Avoid raw `<button>`, `<input>`, `<select>`, `<textarea>`, and custom modal/dialog implementations in feature code
+- Allowed exceptions:
+  - Hidden/native file inputs required for upload UX (`type="file"` with `className="hidden"`)
+  - Native color inputs (`type="color"`) where browser picker behavior is required
+- Use shared semantic button variants (neutral/accent/danger pill styles) to preserve the existing slate/cyan/rose look
+- Use shared overlay primitives for interaction patterns:
+  - `Dialog` for modal forms
+  - `Popover` for anchored menus/tooling
+  - `AlertDialog` for destructive confirmations
+  - Sonner-style `Toaster` + `useToast` for notifications
+
 #### React & TypeScript
 - Use functional components with hooks
 - Leverage TypeScript for type safety - avoid `any` types

@@ -1,3 +1,4 @@
+import { Textarea } from "@/components/ui/textarea";
 import type { Block, HtmlData } from "@/lib/editor";
 
 import Label from "./Label";
@@ -15,10 +16,10 @@ export default function HtmlInspector({
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">
         <Label>HTML</Label>
-        <textarea
+        <Textarea
           value={data.content}
           onChange={(event) => onChange({ content: event.target.value })}
-          className="min-h-36 rounded-lg border border-slate-300 bg-white px-3 py-2 font-mono text-sm text-slate-900"
+          className="min-h-36 font-mono"
           placeholder="<div>Custom HTML</div>"
         />
       </div>

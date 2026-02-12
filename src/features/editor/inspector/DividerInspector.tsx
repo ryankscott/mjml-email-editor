@@ -1,3 +1,5 @@
+import { Input } from "@/components/ui/input";
+import { Select, SelectItem } from "@/components/ui/select";
 import type { Block, DividerData } from "@/lib/editor";
 
 import Label from "./Label";
@@ -25,35 +27,32 @@ export default function DividerInspector({
 
       <div className="flex flex-col gap-2">
         <Label>Border width</Label>
-        <input
+        <Input
           type="text"
           value={data.borderWidth}
           onChange={(event) => onChange({ borderWidth: event.target.value })}
-          className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900"
           placeholder="1px"
         />
       </div>
 
       <div className="flex flex-col gap-2">
         <Label>Border style</Label>
-        <select
+        <Select
           value={data.borderStyle}
-          onChange={(event) => onChange({ borderStyle: event.target.value })}
-          className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900"
+          onValueChange={(value) => onChange({ borderStyle: value })}
         >
-          <option value="solid">Solid</option>
-          <option value="dashed">Dashed</option>
-          <option value="dotted">Dotted</option>
-        </select>
+          <SelectItem value="solid">Solid</SelectItem>
+          <SelectItem value="dashed">Dashed</SelectItem>
+          <SelectItem value="dotted">Dotted</SelectItem>
+        </Select>
       </div>
 
       <div className="flex flex-col gap-2">
         <Label>Padding</Label>
-        <input
+        <Input
           type="text"
           value={data.padding}
           onChange={(event) => onChange({ padding: event.target.value })}
-          className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900"
           placeholder="10px 0"
         />
       </div>

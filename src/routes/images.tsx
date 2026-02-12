@@ -1,6 +1,8 @@
 import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import ImageLibraryPage from "@/components/editor/ImageLibraryPage";
 import AppPageShell from "@/shared/layout/AppPageShell";
 
@@ -15,21 +17,17 @@ export function ImagesPage() {
   return (
     <AppPageShell
       actions={
-        <button
-          type="button"
-          onClick={handleUploadClick}
-          className="rounded-full border border-slate-300 bg-white px-4 py-2 text-xs font-semibold text-slate-700 transition hover:border-slate-400 hover:bg-slate-50"
-        >
+        <Button variant="pillNeutral" size="pill" onClick={handleUploadClick}>
           Upload images
-        </button>
+        </Button>
       }
     >
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <Card className="p-6">
         <ImageLibraryPage
           showInlineUpload={false}
           onUploadButtonReady={(trigger) => setTriggerUpload(() => trigger)}
         />
-      </div>
+      </Card>
     </AppPageShell>
   );
 }

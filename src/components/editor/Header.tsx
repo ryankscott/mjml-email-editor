@@ -1,9 +1,13 @@
-import { useMemo, useState, type ReactNode } from "react";
+import { useMemo, type ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import { Camera, Copy, LayoutDashboard, Palette, Shapes } from "lucide-react";
 
-import { buildMjml } from "../../lib/editor";
-import { compileBlocks } from "../../lib/mjml";
+import { Button } from "@/components/ui/button";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { cn } from "@/lib/utils";
+import { buildMjml } from "@/lib/editor";
+import { compileBlocks } from "@/lib/mjml";
+import { useToast } from "@/shared/ui/ToastProvider";
 import { useBrand } from "./BrandProvider";
 import { useEditorState } from "./EditorProvider";
 
@@ -12,7 +16,7 @@ const navLinks = [
   { to: "/templates", label: "Templates", icon: Shapes },
   { to: "/images", label: "Images", icon: Camera },
   { to: "/brand", label: "Brand", icon: Palette },
-];
+] as const;
 
 export default function Header({
   actions,
@@ -27,7 +31,7 @@ export default function Header({
 }) {
   const state = useEditorState();
   const { activeBrand } = useBrand();
-  const [status, setStatus] = useState<string | null>(null);
+  const toast = useToast();
 
   const mjml = useMemo(
     () => buildMjml(state.blocks, activeBrand),
@@ -37,9 +41,9 @@ export default function Header({
   const handleCopyMjml = async () => {
     try {
       await navigator.clipboard.writeText(mjml);
-      setStatus("MJML copied");
+      toast.success("MJML copied.");
     } catch (error) {
-      setStatus(error instanceof Error ? error.message : "Copy failed");
+      toast.error(error instanceof Error ? error.message : "Copy failed.");
     }
   };
 
@@ -47,101 +51,91 @@ export default function Header({
     try {
       const result = compileBlocks(state.blocks, activeBrand);
       await navigator.clipboard.writeText(result.html);
-      setStatus("HTML copied");
+      toast.success("HTML copied.");
     } catch (error) {
-      setStatus(error instanceof Error ? error.message : "Copy failed");
+      toast.error(error instanceof Error ? error.message : "Copy failed.");
     }
   };
 
+  const hasSecondaryActions =
+    Boolean(mode && onModeChange) || Boolean(actions) || showCopyActions;
+
   return (
-    <div className="flex items-center justify-between gap-4 border-b border-slate-200 bg-white px-6 py-4">
-      <div>
-        <h1 className="text-lg font-semibold text-slate-900">
+    <header className="border-b border-slate-200 bg-white px-6 py-4">
+      <div className="flex flex-col items-start gap-3">
+        <h1 className="text-right text-lg font-semibold text-slate-900">
           MJML email editor
         </h1>
-      </div>
 
-      <div className="flex items-center gap-3 overflow-x-auto">
-        <div className="flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 p-1 whitespace-nowrap">
-          {navLinks.map((link) => {
-            const Icon = link.icon;
-            return (
-              <Link
-                key={link.to}
-                to={link.to}
-                className="flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold text-slate-600 transition hover:bg-white hover:text-slate-900"
-                activeProps={{
-                  className:
-                    "flex items-center gap-2 rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-900 shadow-sm",
-                }}
-              >
-                <Icon size={14} />
-                {link.label}
-              </Link>
-            );
-          })}
-        </div>
-        {mode && onModeChange ? (
-          <>
-            <div className="hidden h-6 w-px bg-slate-200 sm:block" />
-            <div className="flex items-center gap-1 rounded-full border border-slate-200 bg-slate-50 p-1 text-xs font-semibold text-slate-600">
-              <button
-                type="button"
-                onClick={() => onModeChange("canvas")}
-                className={`rounded-full px-3 py-1 transition ${
-                  mode === "canvas"
-                    ? "bg-white text-slate-900 shadow-sm"
-                    : "text-slate-500 hover:text-slate-800"
-                }`}
-              >
-                Canvas
-              </button>
-              <button
-                type="button"
-                onClick={() => onModeChange("preview")}
-                className={`rounded-full px-3 py-1 transition ${
-                  mode === "preview"
-                    ? "bg-white text-slate-900 shadow-sm"
-                    : "text-slate-500 hover:text-slate-800"
-                }`}
-              >
-                Preview
-              </button>
-            </div>
-          </>
-        ) : null}
-        <div className="hidden h-6 w-px bg-slate-200 sm:block" />
-        {actions ? (
-          <div className="flex items-center gap-2 whitespace-nowrap">
-            {actions}
+        <div className="flex flex-row space-around w-full overflow-x-auto">
+          <div className="ml-auto inline-flex min-w-max items-center gap-2 rounded-full border border-slate-200 bg-slate-50 p-1 whitespace-nowrap">
+            {navLinks.map((link) => {
+              const Icon = link.icon;
+              return (
+                <Link
+                  key={link.to}
+                  to={link.to}
+                  className={cn(
+                    "inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold text-slate-600 transition hover:bg-white hover:text-slate-900",
+                  )}
+                  activeProps={{
+                    className:
+                      "inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-900 shadow-sm",
+                  }}
+                >
+                  <Icon size={14} />
+                  {link.label}
+                </Link>
+              );
+            })}
           </div>
-        ) : null}
-        {showCopyActions ? (
-          <>
-            <button
-              type="button"
-              onClick={handleCopyMjml}
-              className="flex items-center gap-2 rounded-full border border-slate-300 bg-white px-4 py-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:border-slate-400 hover:bg-slate-50"
-            >
-              <Copy size={14} />
-              Copy MJML
-            </button>
+          {hasSecondaryActions ? (
+            <div className="flex w-full flex-wrap items-center justify-end gap-2">
+              {mode && onModeChange ? (
+                <ToggleGroup
+                  value={mode}
+                  onValueChange={(value) => {
+                    if (value === "canvas" || value === "preview") {
+                      onModeChange(value);
+                    }
+                  }}
+                >
+                  <ToggleGroupItem value="canvas">Canvas</ToggleGroupItem>
+                  <ToggleGroupItem value="preview">Preview</ToggleGroupItem>
+                </ToggleGroup>
+              ) : null}
 
-            <button
-              type="button"
-              onClick={handleCopyHtml}
-              className="flex items-center gap-2 rounded-full border border-cyan-300 bg-cyan-50 px-4 py-2 text-xs font-semibold text-cyan-700 shadow-sm transition hover:border-cyan-400 hover:bg-cyan-100"
-            >
-              <Copy size={14} />
-              Copy HTML
-            </button>
-          </>
-        ) : null}
+              {actions ? (
+                <div className="flex flex-wrap items-center gap-2">
+                  {actions}
+                </div>
+              ) : null}
 
-        {status ? (
-          <span className="text-xs text-slate-500">{status}</span>
-        ) : null}
+              {showCopyActions ? (
+                <>
+                  <Button
+                    variant="pillNeutral"
+                    size="pill"
+                    onClick={handleCopyMjml}
+                  >
+                    <Copy size={14} />
+                    Copy MJML
+                  </Button>
+
+                  <Button
+                    variant="pillAccent"
+                    size="pill"
+                    onClick={handleCopyHtml}
+                  >
+                    <Copy size={14} />
+                    Copy HTML
+                  </Button>
+                </>
+              ) : null}
+            </div>
+          ) : null}
+        </div>
       </div>
-    </div>
+    </header>
   );
 }

@@ -1,3 +1,4 @@
+import { Input } from "@/components/ui/input";
 import type { Block, LayoutData } from "@/lib/editor";
 
 import Label from "./Label";
@@ -32,11 +33,10 @@ export default function LayoutInspector({
 
       <div className="flex flex-col gap-2">
         <Label>Padding</Label>
-        <input
+        <Input
           type="text"
           value={data.padding}
           onChange={(event) => onChange({ padding: event.target.value })}
-          className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900"
           placeholder="16px"
         />
       </div>

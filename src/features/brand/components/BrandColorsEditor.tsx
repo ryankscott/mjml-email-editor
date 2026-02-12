@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import type { Brand } from "@/lib/brand";
 
 type BrandColorsEditorProps = {
@@ -18,13 +20,9 @@ export default function BrandColorsEditor({
           <h3 className="text-sm font-semibold text-slate-900">Colors</h3>
           <span className="text-xs text-slate-500">({brand.colors.length})</span>
         </div>
-        <button
-          type="button"
-          onClick={onAddColor}
-          className="rounded-full border border-slate-300 bg-white px-3 py-1 text-xs font-semibold text-slate-600 transition hover:border-slate-400 hover:text-slate-800"
-        >
+        <Button variant="pillNeutral" size="sm" onClick={onAddColor}>
           Add new
-        </button>
+        </Button>
       </div>
 
       <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
@@ -60,7 +58,7 @@ export default function BrandColorsEditor({
                   className="absolute inset-0 h-16 w-16 cursor-pointer opacity-0"
                 />
               </div>
-              <input
+              <Input
                 value={color.name}
                 onChange={(event) =>
                   onUpdate({
@@ -72,33 +70,34 @@ export default function BrandColorsEditor({
                     ),
                   })
                 }
-                className="w-full max-w-[120px] rounded-md border border-transparent bg-transparent px-2 py-1 text-center text-xs font-semibold text-slate-700 transition focus:border-slate-300 focus:bg-white"
+                className="h-8 w-full max-w-[120px] border-transparent bg-transparent px-2 py-1 text-center text-xs font-semibold text-slate-700 focus-visible:border-slate-300 focus-visible:bg-white"
               />
-              <button
-                type="button"
+              <Button
+                variant="ghost"
+                size="sm"
                 onClick={() =>
                   onUpdate({
                     ...brand,
                     colors: brand.colors.filter((entry) => entry.id !== color.id),
                   })
                 }
-                className="text-[10px] font-semibold text-slate-400 opacity-0 transition hover:text-rose-500 group-hover:opacity-100"
+                className="h-auto px-1 py-0 text-[10px] font-semibold text-slate-400 opacity-0 hover:text-rose-500 group-hover:opacity-100"
               >
                 Remove
-              </button>
+              </Button>
             </div>
           ))}
 
-          <button
-            type="button"
+          <Button
+            variant="outline"
             onClick={onAddColor}
-            className="flex h-full flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-slate-300 bg-white/60 px-3 py-6 text-xs font-semibold text-slate-500 transition hover:border-slate-400 hover:text-slate-700"
+            className="flex h-full flex-col items-center justify-center gap-2 rounded-xl border-dashed border-slate-300 bg-white/60 px-3 py-6 text-xs font-semibold text-slate-500 hover:border-slate-400 hover:text-slate-700"
           >
             <span className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-300 text-lg text-slate-500">
               +
             </span>
             Add new
-          </button>
+          </Button>
         </div>
       </div>
     </div>

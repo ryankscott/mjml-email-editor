@@ -1,5 +1,7 @@
 import { ChevronDown, ChevronUp, Copy, GripVertical, Trash2 } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
+
 export default function HoverActions({
   onDelete,
   onClone,
@@ -27,49 +29,49 @@ export default function HoverActions({
     >
       <div className="pointer-events-auto flex flex-col items-center gap-2 rounded-lg border border-slate-200 bg-white/90 p-2 text-xs shadow-sm">
         {showMoveActions ? (
-          <button
-            type="button"
+          <Button
             onClick={onMoveUp}
             disabled={!canMoveUp}
-            className={`inline-flex h-6 w-6 items-center justify-center rounded-sm border border-slate-200 text-slate-500 hover:text-slate-700 ${
-              canMoveUp ? "" : "cursor-not-allowed opacity-40"
-            }`}
+            variant="outline"
+            size="icon"
+            className="h-6 w-6 rounded-sm border-slate-200 text-slate-500 hover:text-slate-700"
             aria-label="Move block up"
           >
             <ChevronUp size={14} />
-          </button>
+          </Button>
         ) : null}
         <span className="inline-flex h-6 w-6 items-center justify-center rounded-sm border border-slate-200 text-slate-500">
           <GripVertical size={16} />
         </span>
-        <button
-          type="button"
+        <Button
           onClick={onClone}
-          className="inline-flex h-6 w-6 items-center justify-center rounded-sm border border-slate-200 text-slate-500 hover:text-slate-700"
+          variant="outline"
+          size="icon"
+          className="h-6 w-6 rounded-sm border-slate-200 text-slate-500 hover:text-slate-700"
           aria-label="Clone block"
         >
           <Copy size={14} />
-        </button>
-        <button
-          type="button"
+        </Button>
+        <Button
           onClick={onDelete}
-          className="inline-flex h-6 w-6 items-center justify-center rounded-sm border border-rose-200 text-rose-500 hover:text-rose-600"
+          variant="outline"
+          size="icon"
+          className="h-6 w-6 rounded-sm border-rose-200 text-rose-500 hover:text-rose-600"
           aria-label="Delete block"
         >
           <Trash2 size={14} />
-        </button>
+        </Button>
         {showMoveActions ? (
-          <button
-            type="button"
+          <Button
             onClick={onMoveDown}
             disabled={!canMoveDown}
-            className={`inline-flex h-6 w-6 items-center justify-center rounded-sm border border-slate-200 text-slate-500 hover:text-slate-700 ${
-              canMoveDown ? "" : "cursor-not-allowed opacity-40"
-            }`}
+            variant="outline"
+            size="icon"
+            className="h-6 w-6 rounded-sm border-slate-200 text-slate-500 hover:text-slate-700"
             aria-label="Move block down"
           >
             <ChevronDown size={14} />
-          </button>
+          </Button>
         ) : null}
       </div>
     </div>

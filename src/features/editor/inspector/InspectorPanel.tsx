@@ -1,5 +1,6 @@
 import { useNavigate } from "@tanstack/react-router";
 
+import { Button } from "@/components/ui/button";
 import { useEditorActions, useEditorState } from "@/components/editor/EditorProvider";
 import { findBlock } from "@/lib/editor";
 
@@ -78,13 +79,13 @@ export default function InspectorPanel() {
 
       {activeBlock.dsl ? <DslInspector dsl={activeBlock.dsl} /> : null}
 
-      <button
-        type="button"
+      <Button
+        variant="pillDanger"
         onClick={() => removeBlock(activeBlock.id)}
-        className="mt-auto rounded-xl border border-rose-200 bg-rose-50 px-4 py-2 text-sm font-semibold text-rose-700 transition hover:border-rose-300 hover:bg-rose-100"
+        className="mt-auto rounded-xl px-4 py-2 text-sm font-semibold"
       >
         Delete block
-      </button>
+      </Button>
     </div>
   );
 }

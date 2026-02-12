@@ -1,6 +1,17 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 
+import {
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { useImageMutations, useImagesQuery } from "@/features/images/api/images";
 import { findBlock, type ImageData } from "@/lib/editor";
 import {
@@ -33,6 +44,7 @@ export default function ImageLibraryPage({
   const [localError, setLocalError] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [previewUrls, setPreviewUrls] = useState<Record<string, string>>({});
+  const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
@@ -115,12 +127,12 @@ export default function ImageLibraryPage({
     navigate({ to: "/editor" });
   };
 
-  const handleDelete = async (assetId: string) => {
-    const confirmed = window.confirm("Delete this image from the library?");
-    if (!confirmed) {
+  const handleDelete = async () => {
+    if (!deleteTarget) {
       return;
     }
-    await deleteImage(assetId);
+    await deleteImage(deleteTarget);
+    setDeleteTarget(null);
     await refetch();
   };
 
@@ -133,27 +145,22 @@ export default function ImageLibraryPage({
       <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-slate-500">
         <span>{loading ? "Loading images..." : `${assets.length} images`}</span>
         {showInlineUpload ? (
-          <label className="cursor-pointer rounded-full border border-slate-300 px-4 py-2 text-xs font-semibold text-slate-700 transition hover:border-slate-400 hover:bg-slate-50">
+          <Button
+            variant="pillNeutral"
+            size="pill"
+            onClick={() => fileInputRef.current?.click()}
+          >
             Upload
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              multiple
-              onChange={(event) => void handleUpload(event.target.files)}
-              className="hidden"
-            />
-          </label>
-        ) : (
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            multiple
-            onChange={(event) => void handleUpload(event.target.files)}
-            className="hidden"
-          />
-        )}
+          </Button>
+        ) : null}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          multiple
+          onChange={(event) => void handleUpload(event.target.files)}
+          className="hidden"
+        />
       </div>
 
       {errorMessage ? <ErrorNotice message={errorMessage} /> : null}
@@ -165,43 +172,70 @@ export default function ImageLibraryPage({
           </div>
         ) : null}
         {assets.map((asset) => (
-          <div
-            key={asset.id}
-            className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm"
-          >
-            <div className="h-32 overflow-hidden rounded-lg border border-slate-200 bg-slate-50">
-              {previewUrls[asset.id] ? (
-                <img
-                  src={previewUrls[asset.id]}
-                  alt={asset.name}
-                  className="h-full w-full object-cover"
-                />
-              ) : (
-                <div className="flex h-full items-center justify-center text-xs text-slate-400">
-                  Preview
-                </div>
-              )}
-            </div>
-            <div className="mt-2 text-xs font-semibold text-slate-700">{asset.name}</div>
-            <div className="mt-2 flex flex-wrap gap-2">
-              <button
-                type="button"
-                onClick={() => void handleApply(asset.id, asset.name, asset.width)}
-                className="rounded-full border border-cyan-300 bg-cyan-50 px-3 py-1 text-xs font-semibold text-cyan-700 transition hover:border-cyan-400 hover:bg-cyan-100"
-              >
-                Use in editor
-              </button>
-              <button
-                type="button"
-                onClick={() => void handleDelete(asset.id)}
-                className="rounded-full border border-rose-200 bg-rose-50 px-3 py-1 text-xs font-semibold text-rose-700 transition hover:border-rose-300 hover:bg-rose-100"
-              >
-                Delete
-              </button>
-            </div>
-          </div>
+          <Card key={asset.id} className="rounded-xl p-0">
+            <CardContent className="p-3">
+              <div className="h-32 overflow-hidden rounded-lg border border-slate-200 bg-slate-50">
+                {previewUrls[asset.id] ? (
+                  <img
+                    src={previewUrls[asset.id]}
+                    alt={asset.name}
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <div className="flex h-full items-center justify-center text-xs text-slate-400">
+                    Preview
+                  </div>
+                )}
+              </div>
+              <div className="mt-2 text-xs font-semibold text-slate-700">{asset.name}</div>
+              <div className="mt-2 flex flex-wrap gap-2">
+                <Button
+                  variant="pillAccent"
+                  size="sm"
+                  onClick={() => void handleApply(asset.id, asset.name, asset.width)}
+                >
+                  Use in editor
+                </Button>
+                <Button
+                  variant="pillDanger"
+                  size="sm"
+                  onClick={() => setDeleteTarget(asset.id)}
+                >
+                  Delete
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         ))}
       </div>
+
+      <AlertDialog
+        open={deleteTarget !== null}
+        onOpenChange={(open) => {
+          if (!open) {
+            setDeleteTarget(null);
+          }
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete image</AlertDialogTitle>
+          </AlertDialogHeader>
+          <AlertDialogBody>
+            <AlertDialogDescription>
+              Delete this image from the library?
+            </AlertDialogDescription>
+          </AlertDialogBody>
+          <AlertDialogFooter>
+            <Button variant="pillNeutral" size="pill" onClick={() => setDeleteTarget(null)}>
+              Cancel
+            </Button>
+            <Button variant="pillDanger" size="pill" onClick={() => void handleDelete()}>
+              Delete
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

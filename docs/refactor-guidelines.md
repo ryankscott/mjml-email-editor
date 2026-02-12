@@ -32,6 +32,11 @@ This document captures the current architectural conventions used by the prototy
 - Large components should be split into focused subcomponents under feature folders.
 - Route pages should use shared shells (`src/shared/layout/*`) and shared async state UI (`src/shared/ui/*`) where possible.
 
+## Feedback patterns
+
+- Use toasts via `useToast()` from `src/shared/ui/ToastProvider.tsx` for transient action feedback (copy, save, import/export, etc.).
+- Avoid one-off inline status text in headers/toolbars for ephemeral outcomes; reserve inline text for persistent page state.
+
 ## Testing expectations
 
 - Add unit tests for pure domain logic first (tree operations, parsing, variable handling).

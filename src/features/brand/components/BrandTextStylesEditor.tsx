@@ -1,5 +1,8 @@
 import { Pencil, Plus, Trash2 } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import type { TextStyle, TextStyleId } from "@/lib/brand";
 
 type BrandTextStylesEditorProps = {
@@ -30,14 +33,10 @@ export default function BrandTextStylesEditor({
           <h3 className="text-sm font-semibold text-slate-900">Fonts</h3>
           <span className="text-xs text-slate-500">({textStyles.length})</span>
         </div>
-        <button
-          type="button"
-          onClick={onAddTextStyle}
-          className="inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white px-3 py-1 text-xs font-semibold text-slate-600 transition hover:border-slate-400 hover:text-slate-800"
-        >
+        <Button variant="pillNeutral" size="sm" onClick={onAddTextStyle}>
           <Plus className="h-3.5 w-3.5" />
           Add new
-        </button>
+        </Button>
       </div>
 
       <div className="flex flex-col gap-3">
@@ -65,25 +64,27 @@ export default function BrandTextStylesEditor({
                   </div>
                 </div>
                 <div className="flex items-center gap-2 text-slate-500">
-                  <button
-                    type="button"
+                  <Button
+                    variant="outline"
+                    size="icon"
                     onClick={() => onExpandedStyleIdChange(isExpanded ? null : style.id)}
-                    className="rounded-full border border-slate-200 bg-white p-2 transition hover:border-slate-300 hover:text-slate-700"
+                    className="h-8 w-8 rounded-full border-slate-200 bg-white hover:border-slate-300 hover:text-slate-700"
                     aria-label={`Edit ${style.label}`}
                   >
                     <Pencil className="h-4 w-4" />
-                  </button>
-                  <button
-                    type="button"
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="icon"
                     onClick={() =>
                       isBaseStyle ? onResetTextStyle(style.id) : onRemoveTextStyle(style.id)
                     }
-                    className="rounded-full border border-slate-200 bg-white p-2 transition hover:border-slate-300 hover:text-rose-600"
+                    className="h-8 w-8 rounded-full border-slate-200 bg-white hover:border-slate-300 hover:text-rose-600"
                     title={isBaseStyle ? "Reset to default" : "Delete style"}
                     aria-label={isBaseStyle ? "Reset to default" : "Delete style"}
                   >
                     <Trash2 className="h-4 w-4" />
-                  </button>
+                  </Button>
                 </div>
               </div>
 
@@ -91,62 +92,57 @@ export default function BrandTextStylesEditor({
                 <div className="mt-4 grid gap-3">
                   <div className="grid grid-cols-2 gap-3">
                     <div className="flex flex-col gap-2">
-                      <label className="text-xs font-semibold text-slate-600">Label</label>
-                      <input
+                      <Label>Label</Label>
+                      <Input
                         value={style.label}
                         onChange={(event) =>
                           onUpdateTextStyle(style.id, { label: event.target.value })
                         }
-                        className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900"
                       />
                     </div>
                     <div className="flex flex-col gap-2">
-                      <label className="text-xs font-semibold text-slate-600">Font size</label>
-                      <input
+                      <Label>Font size</Label>
+                      <Input
                         value={style.fontSize}
                         onChange={(event) =>
                           onUpdateTextStyle(style.id, { fontSize: event.target.value })
                         }
-                        className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900"
                       />
                     </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-3">
                     <div className="flex flex-col gap-2">
-                      <label className="text-xs font-semibold text-slate-600">Font family</label>
-                      <input
+                      <Label>Font family</Label>
+                      <Input
                         value={style.fontFamily}
                         onChange={(event) =>
                           onUpdateTextStyle(style.id, { fontFamily: event.target.value })
                         }
-                        className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900"
                       />
                     </div>
                     <div className="flex flex-col gap-2">
-                      <label className="text-xs font-semibold text-slate-600">Font weight</label>
-                      <input
+                      <Label>Font weight</Label>
+                      <Input
                         value={style.fontWeight ?? ""}
                         onChange={(event) =>
                           onUpdateTextStyle(style.id, {
                             fontWeight: event.target.value || undefined,
                           })
                         }
-                        className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900"
                       />
                     </div>
                   </div>
 
                   <div className="flex flex-col gap-2">
-                    <label className="text-xs font-semibold text-slate-600">Line height</label>
-                    <input
+                    <Label>Line height</Label>
+                    <Input
                       value={style.lineHeight ?? ""}
                       onChange={(event) =>
                         onUpdateTextStyle(style.id, {
                           lineHeight: event.target.value || undefined,
                         })
                       }
-                      className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900"
                     />
                   </div>
                 </div>

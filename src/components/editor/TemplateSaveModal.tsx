@@ -1,6 +1,17 @@
 import { useState, type FormEvent } from "react";
 
-import Modal from "./Modal";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 
 export type TemplateSavePayload = {
   name: string;
@@ -21,10 +32,6 @@ export default function TemplateSaveModal({
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
 
-  if (!open) {
-    return null;
-  }
-
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
     const payload: TemplateSavePayload = {
@@ -37,55 +44,54 @@ export default function TemplateSaveModal({
   };
 
   return (
-    <Modal
-      title="Save as Template"
-      onClose={onClose}
-      footer={
-        <div className="flex items-center justify-end gap-3">
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-full border border-slate-300 px-4 py-2 text-xs font-semibold text-slate-600 transition hover:border-slate-400 hover:text-slate-800"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            form="template-save-form"
-            className="rounded-full border border-cyan-300 bg-cyan-50 px-4 py-2 text-xs font-semibold text-cyan-700 transition hover:border-cyan-400 hover:bg-cyan-100"
-          >
-            Save template
-          </button>
-        </div>
-      }
+    <Dialog
+      open={open}
+      onOpenChange={(nextOpen) => {
+        if (!nextOpen) {
+          onClose();
+        }
+      }}
     >
-      <form
-        id="template-save-form"
-        onSubmit={handleSubmit}
-        className="flex flex-col gap-4"
-      >
-        <label className="flex flex-col gap-2 text-xs text-slate-600">
-          Template name
-          <input
-            required
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-            className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900"
-            placeholder="Spring promo email"
-          />
-        </label>
+      <DialogContent className="max-w-2xl">
+        <DialogHeader>
+          <DialogTitle>Save as Template</DialogTitle>
+        </DialogHeader>
 
-        <label className="flex flex-col gap-2 text-xs text-slate-600">
-          Description
-          <textarea
-            value={description}
-            onChange={(event) => setDescription(event.target.value)}
-            className="min-h-[90px] rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900"
-            placeholder="Quick summary for your team."
-          />
-        </label>
+        <DialogBody>
+          <form id="template-save-form" onSubmit={handleSubmit} className="flex flex-col gap-4">
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="template-name">Template name</Label>
+              <Input
+                id="template-name"
+                required
+                value={name}
+                onChange={(event) => setName(event.target.value)}
+                placeholder="Spring promo email"
+              />
+            </div>
 
-      </form>
-    </Modal>
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="template-description">Description</Label>
+              <Textarea
+                id="template-description"
+                value={description}
+                onChange={(event) => setDescription(event.target.value)}
+                className="min-h-[90px]"
+                placeholder="Quick summary for your team."
+              />
+            </div>
+          </form>
+        </DialogBody>
+
+        <DialogFooter>
+          <Button variant="pillNeutral" size="pill" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button variant="pillAccent" size="pill" type="submit" form="template-save-form">
+            Save template
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

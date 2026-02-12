@@ -4,6 +4,8 @@ import { TanStackDevtools } from "@tanstack/react-devtools";
 
 import { BrandProvider } from "../components/editor/BrandProvider";
 import { EditorProvider } from "../components/editor/EditorProvider";
+import { Toaster } from "../components/ui/sonner";
+import { ToastProvider } from "../shared/ui/ToastProvider";
 
 import TanStackQueryDevtools from "../integrations/tanstack-query/devtools";
 
@@ -16,23 +18,26 @@ interface MyRouterContext {
 export const Route = createRootRouteWithContext<MyRouterContext>()({
   component: () => {
     return (
-      <BrandProvider>
-        <EditorProvider>
-          <Outlet />
-          <TanStackDevtools
-            config={{
-              position: "bottom-right",
-            }}
-            plugins={[
-              {
-                name: "Tanstack Router",
-                render: <TanStackRouterDevtoolsPanel />,
-              },
-              TanStackQueryDevtools,
-            ]}
-          />
-        </EditorProvider>
-      </BrandProvider>
+      <ToastProvider>
+        <BrandProvider>
+          <EditorProvider>
+            <Outlet />
+            <Toaster />
+            <TanStackDevtools
+              config={{
+                position: "bottom-right",
+              }}
+              plugins={[
+                {
+                  name: "Tanstack Router",
+                  render: <TanStackRouterDevtoolsPanel />,
+                },
+                TanStackQueryDevtools,
+              ]}
+            />
+          </EditorProvider>
+        </BrandProvider>
+      </ToastProvider>
     );
   },
 });

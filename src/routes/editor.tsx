@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 
+import { Button } from "@/components/ui/button";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import BlocksPanel from "@/components/editor/BlocksPanel";
-import {
-  useEditorState,
-} from "@/components/editor/EditorProvider";
+import { useEditorState } from "@/components/editor/EditorProvider";
 import Inspector from "@/components/editor/Inspector";
 import PreviewFrame from "@/components/editor/PreviewFrame";
 import Header from "@/components/editor/Header";
@@ -81,13 +81,9 @@ export function EditorLayout() {
         onModeChange={setMode}
         actions={
           <>
-            <button
-              type="button"
-              onClick={handleOpenSave}
-              className="rounded-full border border-cyan-300 bg-cyan-50 px-4 py-2 text-xs font-semibold text-cyan-700 shadow-sm transition hover:border-cyan-400 hover:bg-cyan-100"
-            >
+            <Button variant="pillAccent" size="pill" onClick={handleOpenSave}>
               Save to template
-            </button>
+            </Button>
             {templateStatus ? (
               <span className="text-xs text-slate-500">{templateStatus}</span>
             ) : null}
@@ -104,30 +100,17 @@ export function EditorLayout() {
           {mode === "preview" ? (
             <div className="flex h-full flex-col gap-4">
               <div className="flex items-center justify-between gap-3">
-                <div className="flex items-center gap-1 rounded-full border border-slate-200 bg-white p-1 text-xs font-semibold text-slate-600">
-                  <button
-                    type="button"
-                    onClick={() => setDevice("desktop")}
-                    className={`rounded-full px-3 py-1 transition ${
-                      device === "desktop"
-                        ? "bg-slate-900 text-white"
-                        : "text-slate-500 hover:text-slate-900"
-                    }`}
-                  >
-                    Desktop
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setDevice("mobile")}
-                    className={`rounded-full px-3 py-1 transition ${
-                      device === "mobile"
-                        ? "bg-slate-900 text-white"
-                        : "text-slate-500 hover:text-slate-900"
-                    }`}
-                  >
-                    Mobile
-                  </button>
-                </div>
+                <ToggleGroup
+                  value={device}
+                  onValueChange={(value) => {
+                    if (value === "desktop" || value === "mobile") {
+                      setDevice(value);
+                    }
+                  }}
+                >
+                  <ToggleGroupItem value="desktop">Desktop</ToggleGroupItem>
+                  <ToggleGroupItem value="mobile">Mobile</ToggleGroupItem>
+                </ToggleGroup>
                 <span className="text-xs text-slate-500">Preview is read-only.</span>
               </div>
               <div className="min-h-0 flex-1">

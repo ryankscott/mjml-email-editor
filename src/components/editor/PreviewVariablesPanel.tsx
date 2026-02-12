@@ -2,7 +2,10 @@ import {
   SUPPORTED_VARIABLES,
   SUPPORTED_VARIABLES_BY_KEY,
   formatVariableToken,
-} from "../../lib/variables";
+} from "@/lib/variables";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 
 type PreviewVariablesPanelProps = {
   variables: string[];
@@ -49,37 +52,32 @@ export default function PreviewVariablesPanel({
             const description = meta?.description;
             const token = formatVariableToken(key);
             return (
-              <div
-                key={key}
-                className="rounded-xl border border-slate-200 bg-white p-3"
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p className="text-sm font-semibold text-slate-900">
-                      {label}
-                    </p>
-                    {description ? (
-                      <p className="text-xs text-slate-500">{description}</p>
-                    ) : (
-                      <p className="text-[11px] font-mono text-slate-400">
-                        {token}
-                      </p>
-                    )}
+              <Card key={key} className="rounded-xl p-0 shadow-none">
+                <CardContent className="p-3">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="text-sm font-semibold text-slate-900">{label}</p>
+                      {description ? (
+                        <p className="text-xs text-slate-500">{description}</p>
+                      ) : (
+                        <p className="text-[11px] font-mono text-slate-400">{token}</p>
+                      )}
+                    </div>
+                    <Button
+                      variant="pillNeutral"
+                      size="sm"
+                      onClick={() => onRandomize(key)}
+                    >
+                      Randomize
+                    </Button>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => onRandomize(key)}
-                    className="rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-600 transition hover:border-slate-300 hover:text-slate-800"
-                  >
-                    Randomize
-                  </button>
-                </div>
-                <input
-                  value={values[key] ?? ""}
-                  onChange={(event) => onChange(key, event.target.value)}
-                  className="mt-3 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900"
-                />
-              </div>
+                  <Input
+                    value={values[key] ?? ""}
+                    onChange={(event) => onChange(key, event.target.value)}
+                    className="mt-3"
+                  />
+                </CardContent>
+              </Card>
             );
           })}
         </div>

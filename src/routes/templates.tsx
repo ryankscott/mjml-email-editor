@@ -1,6 +1,8 @@
 import { useMemo, useRef, useState, type ChangeEvent } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { useEditorActions, useEditorState } from "@/components/editor/EditorProvider";
 import { useTemplateMutations, useTemplatesQuery } from "@/features/templates/api/templates";
 import type { Template } from "@/lib/templates";
@@ -117,36 +119,24 @@ export function TemplatesPage() {
     <AppPageShell
       actions={
         <>
-          <button
-            type="button"
-            onClick={handleImportClick}
-            className="rounded-full border border-slate-300 bg-white px-4 py-2 text-xs font-semibold text-slate-700 transition hover:border-slate-400 hover:bg-slate-50"
-          >
+          <Button variant="pillNeutral" size="pill" onClick={handleImportClick}>
             Import JSON
-          </button>
-          <button
-            type="button"
-            onClick={handleExportCurrent}
-            className="rounded-full border border-slate-300 bg-white px-4 py-2 text-xs font-semibold text-slate-700 transition hover:border-slate-400 hover:bg-slate-50"
-          >
+          </Button>
+          <Button variant="pillNeutral" size="pill" onClick={handleExportCurrent}>
             Export current
-          </button>
+          </Button>
         </>
       }
     >
-      <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <Card className="p-6">
         <div className="flex items-start justify-between gap-4">
           <div>
             <h2 className="text-sm font-semibold text-slate-900">Template Library</h2>
             <p className="mt-1 text-xs text-slate-500">{statusLine}</p>
           </div>
-          <button
-            type="button"
-            onClick={() => void refetch()}
-            className="rounded-full border border-slate-300 px-3 py-1 text-xs font-semibold text-slate-600 transition hover:border-slate-400 hover:text-slate-800"
-          >
+          <Button variant="pillNeutral" size="sm" onClick={() => void refetch()}>
             Refresh
-          </button>
+          </Button>
         </div>
 
         {errorMessage ? <ErrorNotice message={errorMessage} /> : null}
@@ -157,61 +147,60 @@ export function TemplatesPage() {
           ) : null}
 
           {templates.map((template) => (
-            <div
-              key={template.id}
-              className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
-            >
-              <div className="flex items-start gap-3">
-                <div>
-                  <h3 className="text-sm font-semibold text-slate-900">{template.name}</h3>
-                  {template.description ? (
-                    <p className="mt-1 text-xs text-slate-500">{template.description}</p>
-                  ) : null}
-                </div>
-              </div>
-
-              <div className="mt-3 h-32 overflow-hidden rounded-lg border border-slate-200 bg-white text-black">
-                {template.preview?.html ? (
-                  <div
-                    className="pointer-events-none origin-top-left scale-[0.75]"
-                    dangerouslySetInnerHTML={{
-                      __html: template.preview.html,
-                    }}
-                  />
-                ) : (
-                  <div className="flex h-full items-center justify-center text-xs text-slate-400">
-                    No preview available
+            <Card key={template.id} className="p-0">
+              <CardContent className="p-4">
+                <div className="flex items-start gap-3">
+                  <div>
+                    <h3 className="text-sm font-semibold text-slate-900">{template.name}</h3>
+                    {template.description ? (
+                      <p className="mt-1 text-xs text-slate-500">{template.description}</p>
+                    ) : null}
                   </div>
-                )}
-              </div>
+                </div>
 
-              <div className="mt-4 flex flex-wrap gap-2">
-                <button
-                  type="button"
-                  onClick={() => handleApplyTemplate(template)}
-                  className="rounded-full border border-cyan-300 bg-cyan-50 px-3 py-1 text-xs font-semibold text-cyan-700 transition hover:border-cyan-400 hover:bg-cyan-100"
-                >
-                  Apply in editor
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleExportTemplate(template)}
-                  className="rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-600 transition hover:border-slate-300 hover:text-slate-800"
-                >
-                  Export
-                </button>
-                <button
-                  type="button"
-                  onClick={() => void handleDeleteTemplate(template)}
-                  className="rounded-full border border-rose-200 bg-rose-50 px-3 py-1 text-xs font-semibold text-rose-700 transition hover:border-rose-300 hover:bg-rose-100"
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
+                <div className="mt-3 h-32 overflow-hidden rounded-lg border border-slate-200 bg-white text-black">
+                  {template.preview?.html ? (
+                    <div
+                      className="pointer-events-none origin-top-left scale-[0.75]"
+                      dangerouslySetInnerHTML={{
+                        __html: template.preview.html,
+                      }}
+                    />
+                  ) : (
+                    <div className="flex h-full items-center justify-center text-xs text-slate-400">
+                      No preview available
+                    </div>
+                  )}
+                </div>
+
+                <div className="mt-4 flex flex-wrap gap-2">
+                  <Button
+                    variant="pillAccent"
+                    size="sm"
+                    onClick={() => handleApplyTemplate(template)}
+                  >
+                    Apply in editor
+                  </Button>
+                  <Button
+                    variant="pillNeutral"
+                    size="sm"
+                    onClick={() => handleExportTemplate(template)}
+                  >
+                    Export
+                  </Button>
+                  <Button
+                    variant="pillDanger"
+                    size="sm"
+                    onClick={() => void handleDeleteTemplate(template)}
+                  >
+                    Delete
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
           ))}
         </div>
-      </section>
+      </Card>
 
       <input
         ref={fileInputRef}

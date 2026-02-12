@@ -1,3 +1,5 @@
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import type { Brand } from "@/lib/brand";
 
 type BrandListPaneProps = {
@@ -25,13 +27,9 @@ export default function BrandListPane({
     <div className="flex flex-col gap-3">
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-semibold text-slate-900">Brands</h3>
-        <button
-          type="button"
-          onClick={onCreate}
-          className="rounded-full border border-slate-300 px-3 py-1 text-xs font-semibold text-slate-600 transition hover:border-slate-400 hover:text-slate-800"
-        >
+        <Button variant="pillNeutral" size="sm" onClick={onCreate}>
           New
-        </button>
+        </Button>
       </div>
 
       <div className="flex flex-col gap-2">
@@ -41,44 +39,32 @@ export default function BrandListPane({
           </div>
         ) : null}
         {brands.map((brand) => (
-          <button
+          <Button
             key={brand.id}
-            type="button"
             onClick={() => onSelect(brand.id)}
-            className={`rounded-lg border px-3 py-2 text-left text-sm transition ${
+            variant="outline"
+            className={`h-auto justify-start rounded-lg px-3 py-2 text-left text-sm ${
               brand.id === selectedId
-                ? "border-cyan-400 bg-cyan-50 text-cyan-900"
+                ? "border-cyan-400 bg-cyan-50 text-cyan-900 hover:bg-cyan-50"
                 : "border-slate-200 bg-white text-slate-700 hover:border-slate-300"
             }`}
           >
-            <div className="flex items-center justify-between gap-2">
+            <div className="flex w-full items-center justify-between gap-2">
               <span className="font-semibold">{brand.name}</span>
-              {brand.id === activeBrandId ? (
-                <span className="rounded-full border border-cyan-300 px-2 py-0.5 text-[10px] font-semibold uppercase text-cyan-700">
-                  Active
-                </span>
-              ) : null}
+              {brand.id === activeBrandId ? <Badge variant="accent">Active</Badge> : null}
             </div>
-          </button>
+          </Button>
         ))}
       </div>
 
       {canManageSelection ? (
         <div className="flex flex-col gap-2">
-          <button
-            type="button"
-            onClick={onSetActive}
-            className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-700 transition hover:border-slate-400 hover:bg-slate-50"
-          >
+          <Button variant="outline" className="justify-center rounded-lg text-xs" onClick={onSetActive}>
             Set active
-          </button>
-          <button
-            type="button"
-            onClick={onDelete}
-            className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-xs font-semibold text-rose-700 transition hover:border-rose-300 hover:bg-rose-100"
-          >
+          </Button>
+          <Button variant="pillDanger" size="sm" className="rounded-lg" onClick={onDelete}>
             Delete brand
-          </button>
+          </Button>
         </div>
       ) : null}
     </div>

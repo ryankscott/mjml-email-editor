@@ -8,8 +8,9 @@ import {
   Type,
 } from "lucide-react";
 
-import type { BlockDSL, BlockType } from "../../lib/editor";
-import { FOOTER_DSL } from "../../lib/editor";
+import { Button } from "@/components/ui/button";
+import type { BlockDSL, BlockType } from "@/lib/editor";
+import { FOOTER_DSL } from "@/lib/editor";
 import { useEditorActions } from "./EditorProvider";
 
 type BlockPaletteItem =
@@ -94,7 +95,7 @@ export default function BlocksPanel() {
     if (item.kind === "dsl") {
       event.dataTransfer.setData(
         "application/x-block-dsl",
-        JSON.stringify(item.dsl)
+        JSON.stringify(item.dsl),
       );
     } else {
       event.dataTransfer.setData("application/x-block-type", item.type);
@@ -103,21 +104,19 @@ export default function BlocksPanel() {
   };
 
   return (
-    <div className="h-full flex flex-col gap-4">
+    <div className="flex h-full flex-col gap-4">
       <div>
-        <h2 className="text-sm font-semibold text-slate-700 uppercase tracking-wide">
+        <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-700">
           Blocks
         </h2>
-        <p className="text-xs text-slate-500 mt-1">
-          Drag blocks into the preview
-        </p>
+        <p className="mt-1 text-xs text-slate-500">Drag blocks into the preview</p>
       </div>
 
       <div className="flex flex-col gap-3">
         {blocks.map((block) => {
           const Icon = block.icon;
           return (
-            <button
+            <Button
               key={block.kind === "dsl" ? block.label : block.type}
               type="button"
               draggable
@@ -127,20 +126,17 @@ export default function BlocksPanel() {
                   ? addDslBlocks(block.dsl)
                   : addBlock(block.type)
               }
-              className="group flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-3 text-left shadow-sm transition hover:border-cyan-400 hover:bg-slate-50"
+              variant="outline"
+              className="group h-auto justify-start rounded-xl border-slate-200 bg-white p-3 text-left shadow-sm hover:border-cyan-400 hover:bg-slate-50"
             >
               <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-100 text-cyan-700">
                 <Icon size={20} />
               </span>
               <span className="flex flex-col">
-                <span className="text-sm font-medium text-slate-900">
-                  {block.label}
-                </span>
-                <span className="text-xs text-slate-500">
-                  {block.description}
-                </span>
+                <span className="text-sm font-medium text-slate-900">{block.label}</span>
+                <span className="text-xs text-slate-500">{block.description}</span>
               </span>
-            </button>
+            </Button>
           );
         })}
       </div>
