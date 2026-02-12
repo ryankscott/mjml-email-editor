@@ -1,28 +1,13 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 
-import type { ImageAsset } from "../../lib/stores/types";
-import { getImageStore } from "../../lib/stores";
-import type { Block, ImageData, LayoutData } from "../../lib/editor";
-import { useEditor } from "./EditorProvider";
-
-function findBlockById(blocks: Block[], blockId: string): Block | null {
-  for (const block of blocks) {
-    if (block.id === blockId) {
-      return block;
-    }
-    if (block.type === "layout-2" || block.type === "layout-3") {
-      const data = block.data as LayoutData;
-      for (const column of data.columnBlocks) {
-        const match = findBlockById(column, blockId);
-        if (match) {
-          return match;
-        }
-      }
-    }
-  }
-  return null;
-}
+import { useImageMutations, useImagesQuery } from "@/features/images/api/images";
+import { findBlock, type ImageData } from "@/lib/editor";
+import {
+  useEditorActions,
+  useEditorState,
+} from "@/components/editor/EditorProvider";
+import { EmptyState, ErrorNotice } from "@/shared/ui/AsyncState";
 
 function blobToDataUrl(blob: Blob): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -40,31 +25,15 @@ export default function ImageLibraryPage({
   onUploadButtonReady?: (trigger: () => void) => void;
   showInlineUpload?: boolean;
 }) {
-  const store = useMemo(() => getImageStore(), []);
-  const { state, addBlock, updateBlock, selectBlock } = useEditor();
+  const { data: assets = [], error, isLoading, refetch } = useImagesQuery();
+  const { createImage, deleteImage, getBlob } = useImageMutations();
+  const state = useEditorState();
+  const { addBlock, updateBlock, selectBlock } = useEditorActions();
   const navigate = useNavigate();
-  const [assets, setAssets] = useState<ImageAsset[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [localError, setLocalError] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
   const [previewUrls, setPreviewUrls] = useState<Record<string, string>>({});
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-
-  const loadAssets = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const list = await store.list();
-      setAssets(list);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load images.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    void loadAssets();
-  }, []);
 
   useEffect(() => {
     let isActive = true;
@@ -73,7 +42,7 @@ export default function ImageLibraryPage({
 
     const buildUrls = async () => {
       for (const asset of assets) {
-        const blob = await store.getBlob(asset.id);
+        const blob = await getBlob(asset.id);
         if (!blob || !isActive) {
           continue;
         }
@@ -91,21 +60,21 @@ export default function ImageLibraryPage({
       isActive = false;
       urlsToRevoke.forEach((url) => URL.revokeObjectURL(url));
     };
-  }, [assets, store]);
+  }, [assets, getBlob]);
 
   const handleUpload = async (files: FileList | null) => {
     if (!files || files.length === 0) {
       return;
     }
-    setLoading(true);
+    setUploading(true);
+    setLocalError(null);
     try {
-      const uploads = Array.from(files).map((file) => store.create(file));
-      await Promise.all(uploads);
-      await loadAssets();
+      await Promise.all(Array.from(files).map((file) => createImage(file)));
+      await refetch();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Upload failed.");
+      setLocalError(err instanceof Error ? err.message : "Upload failed.");
     } finally {
-      setLoading(false);
+      setUploading(false);
     }
   };
 
@@ -117,21 +86,20 @@ export default function ImageLibraryPage({
     onUploadButtonReady(trigger);
   }, [onUploadButtonReady]);
 
-  const handleApply = async (asset: ImageAsset) => {
-    const blob = await store.getBlob(asset.id);
+  const handleApply = async (assetId: string, assetName: string, width?: number) => {
+    const blob = await getBlob(assetId);
     if (!blob) {
-      setError("Image not found.");
+      setLocalError("Image not found.");
       return;
     }
     const dataUrl = await blobToDataUrl(blob);
-    const target =
-      state.selectedId ? findBlockById(state.blocks, state.selectedId) : null;
+    const target = state.selectedId ? findBlock(state.blocks, state.selectedId) : null;
     if (target && target.type === "image") {
       updateBlock(target.id, {
         src: dataUrl,
-        alt: asset.name,
-        width: asset.width ? `${asset.width}px` : (target.data as ImageData).width,
-        assetId: asset.id,
+        alt: assetName,
+        width: width ? `${width}px` : (target.data as ImageData).width,
+        assetId,
       });
       navigate({ to: "/editor" });
       return;
@@ -139,9 +107,9 @@ export default function ImageLibraryPage({
     const newId = addBlock("image");
     updateBlock(newId, {
       src: dataUrl,
-      alt: asset.name,
-      width: asset.width ? `${asset.width}px` : "600px",
-      assetId: asset.id,
+      alt: assetName,
+      width: width ? `${width}px` : "600px",
+      assetId,
     });
     selectBlock(newId);
     navigate({ to: "/editor" });
@@ -152,9 +120,13 @@ export default function ImageLibraryPage({
     if (!confirmed) {
       return;
     }
-    await store.delete(assetId);
-    await loadAssets();
+    await deleteImage(assetId);
+    await refetch();
   };
+
+  const loading = isLoading || uploading;
+  const errorMessage =
+    localError ?? (error instanceof Error ? error.message : null);
 
   return (
     <div className="flex flex-col gap-4">
@@ -168,7 +140,7 @@ export default function ImageLibraryPage({
               type="file"
               accept="image/*"
               multiple
-              onChange={(event) => handleUpload(event.target.files)}
+              onChange={(event) => void handleUpload(event.target.files)}
               className="hidden"
             />
           </label>
@@ -178,22 +150,18 @@ export default function ImageLibraryPage({
             type="file"
             accept="image/*"
             multiple
-            onChange={(event) => handleUpload(event.target.files)}
+            onChange={(event) => void handleUpload(event.target.files)}
             className="hidden"
           />
         )}
       </div>
 
-      {error ? (
-        <div className="rounded-lg border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
-          {error}
-        </div>
-      ) : null}
+      {errorMessage ? <ErrorNotice message={errorMessage} /> : null}
 
       <div className="grid gap-4 md:grid-cols-3">
         {assets.length === 0 && !loading ? (
-          <div className="col-span-full rounded-xl border border-dashed border-slate-200 p-6 text-center text-sm text-slate-500">
-            No images yet. Upload files to build your library.
+          <div className="col-span-full">
+            <EmptyState>No images yet. Upload files to build your library.</EmptyState>
           </div>
         ) : null}
         {assets.map((asset) => (
@@ -214,20 +182,18 @@ export default function ImageLibraryPage({
                 </div>
               )}
             </div>
-            <div className="mt-2 text-xs font-semibold text-slate-700">
-              {asset.name}
-            </div>
+            <div className="mt-2 text-xs font-semibold text-slate-700">{asset.name}</div>
             <div className="mt-2 flex flex-wrap gap-2">
               <button
                 type="button"
-                onClick={() => handleApply(asset)}
+                onClick={() => void handleApply(asset.id, asset.name, asset.width)}
                 className="rounded-full border border-cyan-300 bg-cyan-50 px-3 py-1 text-xs font-semibold text-cyan-700 transition hover:border-cyan-400 hover:bg-cyan-100"
               >
                 Use in editor
               </button>
               <button
                 type="button"
-                onClick={() => handleDelete(asset.id)}
+                onClick={() => void handleDelete(asset.id)}
                 className="rounded-full border border-rose-200 bg-rose-50 px-3 py-1 text-xs font-semibold text-rose-700 transition hover:border-rose-300 hover:bg-rose-100"
               >
                 Delete

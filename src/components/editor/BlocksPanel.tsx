@@ -10,7 +10,7 @@ import {
 
 import type { BlockDSL, BlockType } from "../../lib/editor";
 import { FOOTER_DSL } from "../../lib/editor";
-import { useEditor } from "./EditorProvider";
+import { useEditorActions } from "./EditorProvider";
 
 type BlockPaletteItem =
   | {
@@ -88,7 +88,7 @@ const blocks: BlockPaletteItem[] = [
 ];
 
 export default function BlocksPanel() {
-  const { addBlock, addDslBlocks } = useEditor();
+  const { addBlock, addDslBlocks } = useEditorActions();
 
   const handleDragStart = (event: DragEvent, item: BlockPaletteItem) => {
     if (item.kind === "dsl") {

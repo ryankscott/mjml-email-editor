@@ -9,7 +9,7 @@ This is a **prototype application** for an MJML email editor built with React, T
 ### Data Fetching Strategy
 
 - **Current State**: All data fetching should be **mocked** for prototyping purposes
-- **Future State**: Data sources will eventually be backed by REST/GraphQL APIs
+- **Future State**: Data sources will eventually be backed by REST APIs
 - When implementing features requiring data:
   - Use mock data generators (e.g., `@faker-js/faker` is already available)
   - Structure mock responses to match expected API response shapes

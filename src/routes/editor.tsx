@@ -1,38 +1,39 @@
 import { useEffect, useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 
-import BlocksPanel from "../components/editor/BlocksPanel";
-import { useEditor } from "../components/editor/EditorProvider";
-import Inspector from "../components/editor/Inspector";
-import PreviewFrame from "../components/editor/PreviewFrame";
-import Header from "../components/editor/Header";
-import PreviewVariablesPanel from "../components/editor/PreviewVariablesPanel";
+import BlocksPanel from "@/components/editor/BlocksPanel";
+import {
+  useEditorState,
+} from "@/components/editor/EditorProvider";
+import Inspector from "@/components/editor/Inspector";
+import PreviewFrame from "@/components/editor/PreviewFrame";
+import Header from "@/components/editor/Header";
+import PreviewVariablesPanel from "@/components/editor/PreviewVariablesPanel";
 import TemplateSaveModal, {
   type TemplateSavePayload,
-} from "../components/editor/TemplateSaveModal";
-import { templateStore } from "../lib/templateStore";
+} from "@/components/editor/TemplateSaveModal";
+import { useTemplateMutations } from "@/features/templates/api/templates";
 import {
   extractVariableKeysFromBlocks,
   generateVariableValue,
-} from "../lib/variables";
+} from "@/lib/variables";
 
 export const Route = createFileRoute("/editor")({
   component: EditorRoute,
 });
 
-function EditorLayout() {
-  const { state } = useEditor();
+export function EditorLayout() {
+  const state = useEditorState();
+  const { createTemplate } = useTemplateMutations();
   const [saveOpen, setSaveOpen] = useState(false);
   const [templateStatus, setTemplateStatus] = useState<string | null>(null);
   const [mode, setMode] = useState<"canvas" | "preview">("canvas");
   const [device, setDevice] = useState<"desktop" | "mobile">("desktop");
-  const [variableValues, setVariableValues] = useState<Record<string, string>>(
-    {}
-  );
+  const [variableValues, setVariableValues] = useState<Record<string, string>>({});
 
   const detectedVariables = useMemo(
     () => extractVariableKeysFromBlocks(state.blocks),
-    [state.blocks]
+    [state.blocks],
   );
 
   useEffect(() => {
@@ -59,7 +60,7 @@ function EditorLayout() {
 
   const handleSaveTemplate = async (payload: TemplateSavePayload) => {
     try {
-      await templateStore.create({
+      await createTemplate({
         name: payload.name,
         description: payload.description,
         blocks: structuredClone(state.blocks),
@@ -93,13 +94,13 @@ function EditorLayout() {
           </>
         }
       />
-      <div className="flex flex-1 min-h-0">
+      <div className="flex min-h-0 flex-1">
         {mode === "canvas" ? (
           <aside className="hidden w-72 shrink-0 border-r border-slate-200 bg-white p-6 lg:block">
             <BlocksPanel />
           </aside>
         ) : null}
-        <main className="flex-1 min-w-0 p-6">
+        <main className="min-w-0 flex-1 p-6">
           {mode === "preview" ? (
             <div className="flex h-full flex-col gap-4">
               <div className="flex items-center justify-between gap-3">
@@ -127,11 +128,9 @@ function EditorLayout() {
                     Mobile
                   </button>
                 </div>
-                <span className="text-xs text-slate-500">
-                  Preview is read-only.
-                </span>
+                <span className="text-xs text-slate-500">Preview is read-only.</span>
               </div>
-              <div className="flex-1 min-h-0">
+              <div className="min-h-0 flex-1">
                 <PreviewFrame
                   mode={mode}
                   device={device}
@@ -175,12 +174,12 @@ function EditorLayout() {
       <TemplateSaveModal
         open={saveOpen}
         onClose={() => setSaveOpen(false)}
-        onSave={handleSaveTemplate}
+        onSave={(payload) => void handleSaveTemplate(payload)}
       />
     </div>
   );
 }
 
-function EditorRoute() {
+export function EditorRoute() {
   return <EditorLayout />;
 }

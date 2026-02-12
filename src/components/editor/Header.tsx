@@ -5,7 +5,7 @@ import { Camera, Copy, LayoutDashboard, Palette, Shapes } from "lucide-react";
 import { buildMjml } from "../../lib/editor";
 import { compileBlocks } from "../../lib/mjml";
 import { useBrand } from "./BrandProvider";
-import { useEditor } from "./EditorProvider";
+import { useEditorState } from "./EditorProvider";
 
 const navLinks = [
   { to: "/editor", label: "Editor", icon: LayoutDashboard },
@@ -25,7 +25,7 @@ export default function Header({
   mode?: "canvas" | "preview";
   onModeChange?: (mode: "canvas" | "preview") => void;
 }) {
-  const { state } = useEditor();
+  const state = useEditorState();
   const { activeBrand } = useBrand();
   const [status, setStatus] = useState<string | null>(null);
 

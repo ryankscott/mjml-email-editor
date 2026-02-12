@@ -6,8 +6,18 @@ To run this application:
 
 ```bash
 npm install
-npm run start
+npm run dev
 ```
+
+## Refactor Notes
+
+The editor now follows a feature-first structure:
+
+- `src/features/editor/domain/*` contains block types, block-tree operations, and MJML conversion logic.
+- `src/features/{templates,images,brand}/api/*` contains TanStack Query hooks and mutations.
+- `src/shared/layout/*` and `src/shared/ui/*` contain cross-feature layout and async UI primitives.
+
+For implementation conventions, see [docs/refactor-guidelines.md](docs/refactor-guidelines.md).
 
 # Building For Production
 

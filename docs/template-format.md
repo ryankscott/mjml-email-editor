@@ -72,7 +72,7 @@ The block DSL is the MJML JSON shape used throughout the editor. It is represent
 
 ## DSL Expansion To Blocks
 
-DSL expansion is implemented in `expandDsl` and `mjmlJsonToBlocks` in `src/lib/editor.ts`.
+DSL expansion is implemented in `expandDsl` and `mjmlJsonToBlocks` in `src/features/editor/domain/dslToBlocks.ts` and re-exported from `src/lib/editor.ts`.
 
 ### Accepted roots
 
@@ -95,7 +95,7 @@ All blocks created from a DSL payload retain the original DSL in `block.dsl`.
 
 ## Blocks To MJML JSON
 
-Block rendering to MJML JSON is implemented by `blockToMjmlJson` and `buildMjmlJson` in `src/lib/editor.ts`.
+Block rendering to MJML JSON is implemented by `blockToMjmlJson` and `buildMjmlJson` in `src/features/editor/domain/blocksToMjml.ts` and re-exported from `src/lib/editor.ts`.
 
 ### Root structure
 
