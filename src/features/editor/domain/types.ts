@@ -2,7 +2,6 @@ import type { TextStyleId } from "@/lib/brand";
 import type { MjmlJsonNode } from "@/lib/mjmlJson";
 
 export type BlockType =
-  | "section"
   | "text"
   | "image"
   | "layout-2"
@@ -15,12 +14,6 @@ export type BlockMeta = {
 };
 
 export type BlockDSL = MjmlJsonNode;
-
-export type SectionData = {
-  backgroundColor: string;
-  backgroundColorToken?: string;
-  padding: string;
-};
 
 export type TextData = {
   content: string;
@@ -61,7 +54,6 @@ export type LayoutData = {
 };
 
 export type BlockData =
-  | SectionData
   | TextData
   | ImageData
   | LayoutData
@@ -80,6 +72,8 @@ export function isLayoutType(type: BlockType): type is "layout-2" | "layout-3" {
   return type === "layout-2" || type === "layout-3";
 }
 
-export function isLayoutBlock(block: Block): block is Block & { data: LayoutData } {
+export function isLayoutBlock(
+  block: Block,
+): block is Block & { data: LayoutData } {
   return isLayoutType(block.type);
 }

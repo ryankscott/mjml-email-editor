@@ -9,7 +9,6 @@ import type {
   HtmlData,
   ImageData,
   LayoutData,
-  SectionData,
   TextData,
 } from "./types";
 
@@ -116,22 +115,8 @@ function sectionNodeToBlocks(
       );
     });
   if (!columns.length) {
-    warnings.push(`${path} has no columns; created a section block.`);
-    const block = createBlock("section");
-    const data = block.data as SectionData;
-    data.backgroundColor = coerceString(
-      nodeAttribute(section, "background-color"),
-      data.backgroundColor,
-    );
-    const backgroundToken = nodeAttribute(section, "data-background-color-token");
-    if (backgroundToken) {
-      data.backgroundColorToken = backgroundToken;
-    }
-    data.padding = coerceString(
-      nodeAttribute(section, "padding"),
-      data.padding,
-    );
-    return { blocks: [block], warnings };
+    warnings.push(`${path} has no columns and was skipped.`);
+    return { blocks: [], warnings };
   }
 
   if (columns.length === 2 || columns.length === 3) {
@@ -141,7 +126,10 @@ function sectionNodeToBlocks(
       nodeAttribute(section, "background-color"),
       data.backgroundColor,
     );
-    const backgroundToken = nodeAttribute(section, "data-background-color-token");
+    const backgroundToken = nodeAttribute(
+      section,
+      "data-background-color-token",
+    );
     if (backgroundToken) {
       data.backgroundColorToken = backgroundToken;
     }
@@ -195,22 +183,8 @@ function sectionNodeToBlocks(
     });
 
     if (leafBlocks.length === 0) {
-      warnings.push(`${path} has empty column; created a section block.`);
-      const block = createBlock("section");
-      const data = block.data as SectionData;
-      data.backgroundColor = coerceString(
-        nodeAttribute(section, "background-color"),
-        data.backgroundColor,
-      );
-      const backgroundToken = nodeAttribute(section, "data-background-color-token");
-      if (backgroundToken) {
-        data.backgroundColorToken = backgroundToken;
-      }
-      data.padding = coerceString(
-        nodeAttribute(section, "padding"),
-        data.padding,
-      );
-      return { blocks: [block], warnings };
+      warnings.push(`${path} has empty column and was skipped.`);
+      return { blocks: [], warnings };
     }
 
     if (leafBlocks.length === 1) {

@@ -6,7 +6,6 @@ import type {
   HtmlData,
   ImageData,
   LayoutData,
-  SectionData,
   TextData,
 } from "@/lib/editor";
 import { useBrand } from "@/components/editor/BrandProvider";
@@ -67,52 +66,6 @@ export default function BlockRow({
     moveBlock(block.id, { index: Math.min(total - 1, index + 1) });
 
   const isHovered = hoveredId === block.id;
-
-  if (block.type === "section") {
-    const data = block.data as SectionData;
-    return (
-      <div
-        data-block-id={block.id}
-        role="button"
-        tabIndex={0}
-        draggable
-        onDragStart={handleDragStart}
-        onClick={onSelect}
-        onKeyDown={(event) => {
-          if (event.key === "Enter" || event.key === " ") {
-            onSelect();
-          }
-        }}
-        style={{
-          backgroundColor: resolveBrandColor(
-            data.backgroundColor,
-            data.backgroundColorToken,
-            activeBrand,
-          ),
-          padding: data.padding,
-        }}
-        className={`group relative rounded-lg border text-sm transition ${
-          isSelected
-            ? "border-cyan-400 ring-2 ring-cyan-200"
-            : "border-slate-200 hover:border-slate-300"
-        }`}
-      >
-        <div className="rounded-md border border-dashed border-slate-200 px-4 py-6 text-center text-xs text-slate-400">
-          Section container
-        </div>
-        <HoverActions
-          onDelete={handleDelete}
-          onClone={handleClone}
-          onMoveUp={handleMoveUp}
-          onMoveDown={handleMoveDown}
-          canMoveUp={index > 0}
-          canMoveDown={index < total - 1}
-          showMoveActions={allowMoveActions}
-          isVisible={isHovered}
-        />
-      </div>
-    );
-  }
 
   if (block.type === "layout-2" || block.type === "layout-3") {
     const data = block.data as LayoutData;

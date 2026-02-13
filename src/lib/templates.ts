@@ -6,10 +6,14 @@ import type {
   HtmlData,
   ImageData,
   LayoutData,
-  SectionData,
   TextData,
 } from "./editor";
-import { buildMjml, buildMjmlJson, createBlock, mjmlJsonToBlocks } from "./editor";
+import {
+  buildMjml,
+  buildMjmlJson,
+  createBlock,
+  mjmlJsonToBlocks,
+} from "./editor";
 import type { MjmlJsonNode } from "./mjmlJson";
 import { normalizeMjmlNode } from "./mjmlJson";
 import { compileBlocks } from "./mjml";
@@ -47,7 +51,6 @@ export type TemplateLibrary = {
 };
 
 const BLOCK_TYPES: BlockType[] = [
-  "section",
   "text",
   "image",
   "layout-2",
@@ -73,7 +76,8 @@ export function buildTemplatePreview(blocks: Block[]): TemplatePreview | null {
 
 export function createTemplateFromBlocks(input: TemplateInput): Template {
   const now = new Date().toISOString();
-  const preview = input.preview ?? buildTemplatePreview(input.blocks) ?? undefined;
+  const preview =
+    input.preview ?? buildTemplatePreview(input.blocks) ?? undefined;
   const mjmlJson = input.mjmlJson ?? buildMjmlJson(input.blocks);
 
   return {
@@ -204,10 +208,11 @@ function cloneBlock(block: Block, context: "root" | "column"): Block | null {
 
   if (cloned.type === "layout-2" || cloned.type === "layout-3") {
     const data = cloned.data as LayoutData;
-    data.columnBlocks = data.columnBlocks.map((column) =>
-      column
-        .map((child) => cloneBlock(child, "column"))
-        .filter(Boolean) as Block[]
+    data.columnBlocks = data.columnBlocks.map(
+      (column) =>
+        column
+          .map((child) => cloneBlock(child, "column"))
+          .filter(Boolean) as Block[],
     );
   }
 
@@ -225,7 +230,7 @@ function sanitizeBlocks(rawBlocks: unknown[]): {
     const { block, warnings: blockWarnings } = sanitizeBlock(
       rawBlock,
       "root",
-      `blocks[${index}]`
+      `blocks[${index}]`,
     );
     warnings.push(...blockWarnings);
     if (block) {
@@ -239,7 +244,7 @@ function sanitizeBlocks(rawBlocks: unknown[]): {
 function sanitizeBlock(
   rawBlock: unknown,
   context: "root" | "column",
-  path: string
+  path: string,
 ): { block: Block | null; warnings: string[] } {
   const warnings: string[] = [];
 
@@ -269,16 +274,7 @@ function sanitizeBlock(
 
   let sanitizedData = base.data;
 
-  if (type === "section") {
-    const baseData = base.data as SectionData;
-    sanitizedData = {
-      backgroundColor: coerceString(
-        data.backgroundColor,
-        baseData.backgroundColor
-      ),
-      padding: coerceString(data.padding, baseData.padding),
-    };
-  } else if (type === "text") {
+  if (type === "text") {
     const baseData = base.data as TextData;
     sanitizedData = {
       content: coerceString(data.content, baseData.content),
@@ -306,7 +302,7 @@ function sanitizeBlock(
       : [];
     const columnBlocks: Block[][] = Array.from(
       { length: baseData.columns },
-      () => []
+      () => [],
     );
 
     rawColumns.forEach((column, columnIndex) => {
@@ -318,7 +314,7 @@ function sanitizeBlock(
         const { block, warnings: childWarnings } = sanitizeBlock(
           child,
           "column",
-          childPath
+          childPath,
         );
         warnings.push(...childWarnings);
         if (block) {
@@ -331,7 +327,7 @@ function sanitizeBlock(
       columns: baseData.columns,
       backgroundColor: coerceString(
         data.backgroundColor,
-        baseData.backgroundColor
+        baseData.backgroundColor,
       ),
       padding: coerceString(data.padding, baseData.padding),
       columnBlocks,
@@ -358,9 +354,7 @@ function sanitizeBlock(
     meta: mjmlComponent ? { mjmlComponent } : undefined,
   };
 
-  const normalizedDsl = normalizeMjmlNode(
-    (rawBlock as { dsl?: unknown }).dsl
-  );
+  const normalizedDsl = normalizeMjmlNode((rawBlock as { dsl?: unknown }).dsl);
   if (normalizedDsl) {
     block.dsl = normalizedDsl as BlockDSL;
   }
@@ -387,10 +381,7 @@ function coerceTextStyle(value: unknown) {
   return undefined;
 }
 
-function coerceAlign(
-  value: unknown,
-  fallback: "left" | "center" | "right"
-) {
+function coerceAlign(value: unknown, fallback: "left" | "center" | "right") {
   if (value === "left" || value === "center" || value === "right") {
     return value;
   }

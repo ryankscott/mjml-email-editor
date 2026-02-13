@@ -32,13 +32,6 @@ type BlockPaletteItem =
 const blocks: BlockPaletteItem[] = [
   {
     kind: "block",
-    type: "section",
-    label: "Section",
-    description: "Background and spacing",
-    icon: LayoutPanelTop,
-  },
-  {
-    kind: "block",
     type: "layout-2",
     label: "2 Columns",
     description: "Two-column layout",
@@ -109,7 +102,9 @@ export default function BlocksPanel() {
         <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-700">
           Blocks
         </h2>
-        <p className="mt-1 text-xs text-slate-500">Drag blocks into the preview</p>
+        <p className="mt-1 text-xs text-slate-500">
+          Drag blocks into the preview
+        </p>
       </div>
 
       <div className="flex flex-col gap-3">
@@ -133,8 +128,12 @@ export default function BlocksPanel() {
                 <Icon size={20} />
               </span>
               <span className="flex flex-col">
-                <span className="text-sm font-medium text-slate-900">{block.label}</span>
-                <span className="text-xs text-slate-500">{block.description}</span>
+                <span className="text-sm font-medium text-slate-900">
+                  {block.label}
+                </span>
+                <span className="text-xs text-slate-500">
+                  {block.description}
+                </span>
               </span>
             </Button>
           );

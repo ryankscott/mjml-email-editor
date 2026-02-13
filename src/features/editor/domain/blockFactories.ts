@@ -7,14 +7,8 @@ import type {
   HtmlData,
   ImageData,
   LayoutData,
-  SectionData,
   TextData,
 } from "./types";
-
-const defaultSection: SectionData = {
-  backgroundColor: "#ffffff",
-  padding: "20px",
-};
 
 const defaultText: TextData = {
   content: "Your text here",
@@ -55,7 +49,6 @@ const defaultHtml: HtmlData = {
 };
 
 const defaultDataByType: Record<BlockType, BlockData> = {
-  section: defaultSection,
   text: defaultText,
   image: defaultImage,
   "layout-2": defaultLayout2,
@@ -65,7 +58,6 @@ const defaultDataByType: Record<BlockType, BlockData> = {
 };
 
 export const BLOCK_MJML_COMPONENTS: Record<BlockType, string> = {
-  section: "mj-section",
   text: "mj-text",
   image: "mj-image",
   "layout-2": "mj-section",

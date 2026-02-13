@@ -1,7 +1,10 @@
 import { useNavigate } from "@tanstack/react-router";
 
 import { Button } from "@/components/ui/button";
-import { useEditorActions, useEditorState } from "@/components/editor/EditorProvider";
+import {
+  useEditorActions,
+  useEditorState,
+} from "@/components/editor/EditorProvider";
 import { findBlock } from "@/lib/editor";
 
 import DividerInspector from "./DividerInspector";
@@ -9,14 +12,15 @@ import DslInspector from "./DslInspector";
 import HtmlInspector from "./HtmlInspector";
 import ImageInspector from "./ImageInspector";
 import LayoutInspector from "./LayoutInspector";
-import SectionInspector from "./SectionInspector";
 import TextInspector from "./TextInspector";
 
 export default function InspectorPanel() {
   const state = useEditorState();
   const { updateBlock, removeBlock } = useEditorActions();
   const navigate = useNavigate();
-  const activeBlock = state.selectedId ? findBlock(state.blocks, state.selectedId) : null;
+  const activeBlock = state.selectedId
+    ? findBlock(state.blocks, state.selectedId)
+    : null;
 
   if (!activeBlock) {
     return (
@@ -30,16 +34,11 @@ export default function InspectorPanel() {
   return (
     <div className="flex h-full flex-col gap-5 overflow-y-auto">
       <div>
-        <h2 className="text-lg font-semibold capitalize text-slate-900">{activeBlock.type}</h2>
+        <h2 className="text-lg font-semibold capitalize text-slate-900">
+          {activeBlock.type}
+        </h2>
         <p className="text-xs text-slate-500">Block settings</p>
       </div>
-
-      {activeBlock.type === "section" ? (
-        <SectionInspector
-          block={activeBlock}
-          onChange={(data) => updateBlock(activeBlock.id, data)}
-        />
-      ) : null}
 
       {activeBlock.type === "layout-2" || activeBlock.type === "layout-3" ? (
         <LayoutInspector

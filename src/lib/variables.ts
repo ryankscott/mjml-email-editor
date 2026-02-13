@@ -79,7 +79,7 @@ export function extractVariableKeysFromBlocks(blocks: Block[]): string[] {
   const walk = (block: Block) => {
     if (isLayoutData(block.data)) {
       const { columnBlocks, ...rest } = block.data;
-      scanBlockData(rest, keys);
+      scanBlockData(rest as BlockData, keys);
       columnBlocks.forEach((column) => column.forEach(walk));
       return;
     }
