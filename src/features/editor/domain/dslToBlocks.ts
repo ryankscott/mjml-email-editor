@@ -123,6 +123,10 @@ function sectionNodeToBlocks(
       nodeAttribute(section, "background-color"),
       data.backgroundColor,
     );
+    const backgroundToken = nodeAttribute(section, "data-background-color-token");
+    if (backgroundToken) {
+      data.backgroundColorToken = backgroundToken;
+    }
     data.padding = coerceString(
       nodeAttribute(section, "padding"),
       data.padding,
@@ -137,6 +141,10 @@ function sectionNodeToBlocks(
       nodeAttribute(section, "background-color"),
       data.backgroundColor,
     );
+    const backgroundToken = nodeAttribute(section, "data-background-color-token");
+    if (backgroundToken) {
+      data.backgroundColorToken = backgroundToken;
+    }
     data.padding = coerceString(
       nodeAttribute(section, "padding"),
       data.padding,
@@ -194,6 +202,10 @@ function sectionNodeToBlocks(
         nodeAttribute(section, "background-color"),
         data.backgroundColor,
       );
+      const backgroundToken = nodeAttribute(section, "data-background-color-token");
+      if (backgroundToken) {
+        data.backgroundColorToken = backgroundToken;
+      }
       data.padding = coerceString(
         nodeAttribute(section, "padding"),
         data.padding,

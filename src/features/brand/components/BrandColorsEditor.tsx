@@ -2,6 +2,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { Brand } from "@/lib/brand";
 
+import ColorPicker from "@/features/editor/inspector/ColorPicker";
+
 type BrandColorsEditorProps = {
   brand: Brand;
   onUpdate: (next: Brand) => void;
@@ -36,28 +38,18 @@ export default function BrandColorsEditor({
         <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
           {brand.colors.map((color) => (
             <div key={color.id} className="group flex flex-col items-center gap-2">
-              <div className="relative">
-                <div
-                  className="h-16 w-16 rounded-xl border border-slate-200 shadow-sm"
-                  style={{ backgroundColor: color.value }}
-                />
-                <input
-                  type="color"
-                  value={color.value}
-                  onChange={(event) =>
-                    onUpdate({
-                      ...brand,
-                      colors: brand.colors.map((entry) =>
-                        entry.id === color.id
-                          ? { ...entry, value: event.target.value }
-                          : entry,
-                      ),
-                    })
-                  }
-                  aria-label={`Pick ${color.name} color`}
-                  className="absolute inset-0 h-16 w-16 cursor-pointer opacity-0"
-                />
-              </div>
+              <ColorPicker
+                mode="custom-only"
+                value={color.value}
+                onChange={(nextColor) =>
+                  onUpdate({
+                    ...brand,
+                    colors: brand.colors.map((entry) =>
+                      entry.id === color.id ? { ...entry, value: nextColor } : entry,
+                    ),
+                  })
+                }
+              />
               <Input
                 value={color.name}
                 onChange={(event) =>

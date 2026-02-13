@@ -10,6 +10,7 @@ import { useBrand } from "@/components/editor/BrandProvider";
 import type { Block, TextData } from "@/lib/editor";
 import { SUPPORTED_VARIABLES, formatVariableToken } from "@/lib/variables";
 
+import ColorPicker from "./ColorPicker";
 import Label from "./Label";
 
 export default function TextInspector({
@@ -27,9 +28,6 @@ export default function TextInspector({
   const colorTokens = activeBrand?.colors ?? [];
   const selectedStyle = data.textStyle ?? "custom";
   const selectedColor = data.colorToken ?? "custom";
-  const hasColorToken =
-    selectedColor !== "custom" &&
-    colorTokens.some((color) => color.id === selectedColor);
   const hasTextStyle =
     selectedStyle !== "custom" &&
     textStyles.some((style) => style.id === selectedStyle);
@@ -107,68 +105,22 @@ export default function TextInspector({
       <div className="flex flex-col gap-2">
         <div className="flex flex-col gap-2">
           <Label>Text color</Label>
-          <div className="flex flex-wrap gap-2">
-            {!hasColorToken && selectedColor !== "custom" ? (
-              <Button
-                onClick={() => onChange({ colorToken: undefined })}
-                className="relative h-9 w-9 rounded-full border border-dashed border-slate-300 shadow-sm ring-2 ring-slate-400 ring-offset-2 ring-offset-white"
-                aria-label="Unknown brand color"
-                title="Unknown brand color"
-                style={{ backgroundColor: data.color }}
-              >
-                <span className="sr-only">Unknown brand color</span>
-              </Button>
-            ) : null}
-            {colorTokens.map((color) => {
-              const isSelected = selectedColor === color.id;
-              return (
-                <Button
-                  key={color.id}
-                  onClick={() => onChange({ colorToken: color.id })}
-                  aria-label={color.name}
-                  className={`relative h-9 w-9 rounded-full border border-slate-200 p-0 shadow-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 ${
-                    isSelected
-                      ? "ring-2 ring-slate-400 ring-offset-2 ring-offset-white"
-                      : "hover:scale-[1.02]"
-                  }`}
-                  style={{ backgroundColor: color.value }}
-                >
-                  <span className="sr-only">{color.name}</span>
-                </Button>
-              );
-            })}
-            <div className="relative">
-              <Button
-                onClick={() => onChange({ colorToken: undefined })}
-                className={`flex h-9 w-9 items-center justify-center rounded-full border border-dashed p-0 text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 ${
-                  selectedColor === "custom"
-                    ? "border-slate-400 text-slate-700 ring-2 ring-slate-400 ring-offset-2 ring-offset-white"
-                    : "border-slate-300 text-slate-500 hover:border-slate-400 hover:text-slate-700"
-                }`}
-                aria-label="Custom color"
-                style={
-                  selectedColor === "custom"
-                    ? { backgroundColor: data.color }
-                    : undefined
-                }
-              >
-                {selectedColor === "custom" ? null : "+"}
-              </Button>
-              <input
-                type="color"
-                value={data.color}
-                onClick={() => onChange({ colorToken: undefined })}
-                onChange={(event) =>
-                  onChange({
-                    colorToken: undefined,
-                    color: event.target.value,
-                  })
-                }
-                aria-label="Pick custom color"
-                className="absolute inset-0 h-9 w-9 cursor-pointer opacity-0"
-              />
-            </div>
-          </div>
+          <ColorPicker
+            value={data.color}
+            tokens={colorTokens}
+            selectedToken={selectedColor}
+            onSelectToken={(tokenId) =>
+              onChange({
+                colorToken: tokenId === "custom" ? undefined : tokenId,
+              })
+            }
+            onChange={(nextColor) =>
+              onChange({
+                colorToken: undefined,
+                color: nextColor,
+              })
+            }
+          />
         </div>
 
         <div className="flex flex-col gap-2">

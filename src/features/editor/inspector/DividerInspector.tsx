@@ -2,6 +2,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectItem } from "@/components/ui/select";
 import type { Block, DividerData } from "@/lib/editor";
 
+import ColorPicker from "./ColorPicker";
 import Label from "./Label";
 
 export default function DividerInspector({
@@ -17,11 +18,10 @@ export default function DividerInspector({
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">
         <Label>Border color</Label>
-        <input
-          type="color"
+        <ColorPicker
+          mode="custom-only"
           value={data.borderColor}
-          onChange={(event) => onChange({ borderColor: event.target.value })}
-          className="h-10 w-full cursor-pointer rounded-lg border border-slate-300 bg-white"
+          onChange={(nextColor) => onChange({ borderColor: nextColor })}
         />
       </div>
 

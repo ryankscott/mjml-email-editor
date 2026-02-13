@@ -1,4 +1,4 @@
-import { resolveTextStyle, type Brand } from "@/lib/brand";
+import { resolveBrandColor, resolveTextStyle, type Brand } from "@/lib/brand";
 import type { MjmlJsonNode } from "@/lib/mjmlJson";
 import { serializeMjmlJson } from "@/lib/mjmlJson";
 
@@ -81,7 +81,14 @@ export function blockToMjmlJson(
     return {
       tagName: "mj-section",
       attributes: {
-        "background-color": data.backgroundColor,
+        "background-color": resolveBrandColor(
+          data.backgroundColor,
+          data.backgroundColorToken,
+          brand,
+        ),
+        ...(data.backgroundColorToken
+          ? { "data-background-color-token": data.backgroundColorToken }
+          : {}),
         padding: data.padding,
       },
       children: [
@@ -107,7 +114,14 @@ export function blockToMjmlJson(
     return {
       tagName: "mj-section",
       attributes: {
-        "background-color": data.backgroundColor,
+        "background-color": resolveBrandColor(
+          data.backgroundColor,
+          data.backgroundColorToken,
+          brand,
+        ),
+        ...(data.backgroundColorToken
+          ? { "data-background-color-token": data.backgroundColorToken }
+          : {}),
         padding: data.padding,
       },
       children: data.columnBlocks.map((columnBlocks) => ({

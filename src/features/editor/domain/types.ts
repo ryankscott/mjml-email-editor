@@ -18,6 +18,7 @@ export type BlockDSL = MjmlJsonNode;
 
 export type SectionData = {
   backgroundColor: string;
+  backgroundColorToken?: string;
   padding: string;
 };
 
@@ -55,6 +56,7 @@ export type LayoutData = {
   columns: 2 | 3;
   columnBlocks: Block[][];
   backgroundColor: string;
+  backgroundColorToken?: string;
   padding: string;
 };
 

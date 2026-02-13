@@ -125,3 +125,14 @@ export function resolveTextStyle(
     lineHeight: style?.lineHeight ?? data.lineHeight,
   };
 }
+
+export function resolveBrandColor(
+  fallbackColor: string,
+  tokenId?: string,
+  brand?: Brand | null,
+) {
+  if (!tokenId) {
+    return fallbackColor;
+  }
+  return brand?.colors.find((entry) => entry.id === tokenId)?.value ?? fallbackColor;
+}

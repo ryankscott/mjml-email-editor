@@ -1,6 +1,8 @@
 import { Input } from "@/components/ui/input";
 import type { Block, SectionData } from "@/lib/editor";
+import { useBrand } from "@/components/editor/BrandProvider";
 
+import ColorPicker from "./ColorPicker";
 import Label from "./Label";
 
 export default function SectionInspector({
@@ -11,16 +13,29 @@ export default function SectionInspector({
   onChange: (data: Partial<SectionData>) => void;
 }) {
   const data = block.data as SectionData;
+  const { activeBrand } = useBrand();
+  const colorTokens = activeBrand?.colors ?? [];
+  const selectedColor = data.backgroundColorToken ?? "custom";
 
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">
         <Label>Background</Label>
-        <input
-          type="color"
+        <ColorPicker
           value={data.backgroundColor}
-          onChange={(event) => onChange({ backgroundColor: event.target.value })}
-          className="h-10 w-full cursor-pointer rounded-lg border border-slate-300 bg-white"
+          tokens={colorTokens}
+          selectedToken={selectedColor}
+          onSelectToken={(tokenId) =>
+            onChange({
+              backgroundColorToken: tokenId === "custom" ? undefined : tokenId,
+            })
+          }
+          onChange={(nextColor) =>
+            onChange({
+              backgroundColorToken: undefined,
+              backgroundColor: nextColor,
+            })
+          }
         />
       </div>
 

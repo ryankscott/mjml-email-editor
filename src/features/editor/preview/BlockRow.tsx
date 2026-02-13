@@ -14,7 +14,7 @@ import {
   useEditorActions,
   useEditorState,
 } from "@/components/editor/EditorProvider";
-import { resolveTextStyle } from "@/lib/brand";
+import { resolveBrandColor, resolveTextStyle } from "@/lib/brand";
 
 import DropZone from "./DropZone";
 import HoverActions from "./HoverActions";
@@ -84,7 +84,11 @@ export default function BlockRow({
           }
         }}
         style={{
-          backgroundColor: data.backgroundColor,
+          backgroundColor: resolveBrandColor(
+            data.backgroundColor,
+            data.backgroundColorToken,
+            activeBrand,
+          ),
           padding: data.padding,
         }}
         className={`group relative rounded-lg border text-sm transition ${
@@ -126,7 +130,11 @@ export default function BlockRow({
           }
         }}
         style={{
-          backgroundColor: data.backgroundColor,
+          backgroundColor: resolveBrandColor(
+            data.backgroundColor,
+            data.backgroundColorToken,
+            activeBrand,
+          ),
           padding: data.padding,
         }}
         className={`group relative rounded-lg border text-sm transition ${
