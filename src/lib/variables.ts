@@ -47,7 +47,7 @@ export const SUPPORTED_VARIABLES: SupportedVariable[] = [
 
 export const SUPPORTED_VARIABLES_BY_KEY: Record<string, SupportedVariable> =
   Object.fromEntries(
-    SUPPORTED_VARIABLES.map((variable) => [variable.key, variable])
+    SUPPORTED_VARIABLES.map((variable) => [variable.key, variable]),
   );
 
 function collectVariableKeys(value: string, keys: Set<string>) {
@@ -102,7 +102,7 @@ function escapeHtml(value: string): string {
 
 export function replaceVariables(
   html: string,
-  values: Record<string, string>
+  values: Record<string, string>,
 ): string {
   if (!html) {
     return html;

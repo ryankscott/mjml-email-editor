@@ -17,10 +17,7 @@ import { resolveBrandColor, resolveTextStyle } from "@/lib/brand";
 
 import DropZone from "./DropZone";
 import HoverActions from "./HoverActions";
-import {
-  type DropTarget,
-  makeTargetKey,
-} from "./dnd";
+import { type DropTarget, makeTargetKey } from "./dnd";
 import { renderTextWithVariables } from "./renderTextWithVariables";
 
 export default function BlockRow({
@@ -51,7 +48,8 @@ export default function BlockRow({
   allowMoveActions?: boolean;
 }) {
   const state = useEditorState();
-  const { removeBlock, cloneBlock, moveBlock, selectBlock } = useEditorActions();
+  const { removeBlock, cloneBlock, moveBlock, selectBlock } =
+    useEditorActions();
   const { activeBrand } = useBrand();
 
   const handleDragStart = (event: DragEvent) => {
@@ -61,7 +59,8 @@ export default function BlockRow({
 
   const handleDelete = () => removeBlock(block.id);
   const handleClone = () => cloneBlock(block.id);
-  const handleMoveUp = () => moveBlock(block.id, { index: Math.max(0, index - 1) });
+  const handleMoveUp = () =>
+    moveBlock(block.id, { index: Math.max(0, index - 1) });
   const handleMoveDown = () =>
     moveBlock(block.id, { index: Math.min(total - 1, index + 1) });
 
@@ -96,7 +95,9 @@ export default function BlockRow({
             : "border-slate-200 hover:border-slate-300"
         }`}
       >
-        <div className={`grid gap-4 ${data.columns === 2 ? "grid-cols-2" : "grid-cols-3"}`}>
+        <div
+          className={`grid gap-4 ${data.columns === 2 ? "grid-cols-2" : "grid-cols-3"}`}
+        >
           {data.columnBlocks.map((columnBlocks, columnIndex) => (
             <div
               key={`${block.id}-col-${columnIndex}`}
@@ -169,53 +170,53 @@ export default function BlockRow({
                 </div>
               ) : (
                 columnBlocks.map((child, childIndex) => (
-                    <div key={child.id} className="my-2 space-y-3">
-                      <BlockRow
-                        block={child}
-                        index={childIndex}
-                        total={columnBlocks.length}
-                        isSelected={state.selectedId === child.id}
-                        hoveredId={hoveredId}
-                        onSelect={() => selectBlock(child.id)}
-                        isDragging={isDragging}
-                        dragOverKey={dragOverKey}
-                        setDragOverKey={setDragOverKey}
-                        setIsDragging={setIsDragging}
-                        onDropAt={onDropAt}
-                        allowMoveActions={false}
-                      />
-                      {isDragging ? (
-                        <DropZone
-                          isActive={
-                            dragOverKey ===
+                  <div key={child.id} className="my-2 space-y-3">
+                    <BlockRow
+                      block={child}
+                      index={childIndex}
+                      total={columnBlocks.length}
+                      isSelected={state.selectedId === child.id}
+                      hoveredId={hoveredId}
+                      onSelect={() => selectBlock(child.id)}
+                      isDragging={isDragging}
+                      dragOverKey={dragOverKey}
+                      setDragOverKey={setDragOverKey}
+                      setIsDragging={setIsDragging}
+                      onDropAt={onDropAt}
+                      allowMoveActions={false}
+                    />
+                    {isDragging ? (
+                      <DropZone
+                        isActive={
+                          dragOverKey ===
+                          makeTargetKey({
+                            parentId: block.id,
+                            columnIndex,
+                            index: childIndex + 1,
+                          })
+                        }
+                        size="lg"
+                        onDragOver={() =>
+                          setDragOverKey(
                             makeTargetKey({
                               parentId: block.id,
                               columnIndex,
                               index: childIndex + 1,
-                            })
-                          }
-                          size="lg"
-                          onDragOver={() =>
-                            setDragOverKey(
-                              makeTargetKey({
-                                parentId: block.id,
-                                columnIndex,
-                                index: childIndex + 1,
-                              }),
-                            )
-                          }
-                          onDragLeave={() => setDragOverKey(null)}
-                          onDrop={(event) =>
-                            onDropAt(event, {
-                              parentId: block.id,
-                              columnIndex,
-                              index: childIndex + 1,
-                            })
-                          }
-                        />
-                      ) : null}
-                    </div>
-                  ))
+                            }),
+                          )
+                        }
+                        onDragLeave={() => setDragOverKey(null)}
+                        onDrop={(event) =>
+                          onDropAt(event, {
+                            parentId: block.id,
+                            columnIndex,
+                            index: childIndex + 1,
+                          })
+                        }
+                      />
+                    ) : null}
+                  </div>
+                ))
               )}
             </div>
           ))}
@@ -269,7 +270,11 @@ export default function BlockRow({
         >
           {renderTextWithVariables(data.content)}
         </p>
-        <HoverActions onDelete={handleDelete} onClone={handleClone} isVisible={isHovered} />
+        <HoverActions
+          onDelete={handleDelete}
+          onClone={handleClone}
+          isVisible={isHovered}
+        />
       </div>
     );
   }
@@ -303,7 +308,11 @@ export default function BlockRow({
             padding: data.padding,
           }}
         />
-        <HoverActions onDelete={handleDelete} onClone={handleClone} isVisible={isHovered} />
+        <HoverActions
+          onDelete={handleDelete}
+          onClone={handleClone}
+          isVisible={isHovered}
+        />
       </div>
     );
   }
@@ -332,8 +341,14 @@ export default function BlockRow({
         <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
           HTML section
         </p>
-        <pre className="mt-2 whitespace-pre-wrap text-xs text-slate-700">{data.content}</pre>
-        <HoverActions onDelete={handleDelete} onClone={handleClone} isVisible={isHovered} />
+        <pre className="mt-2 whitespace-pre-wrap text-xs text-slate-700">
+          {data.content}
+        </pre>
+        <HoverActions
+          onDelete={handleDelete}
+          onClone={handleClone}
+          isVisible={isHovered}
+        />
       </div>
     );
   }
@@ -364,7 +379,11 @@ export default function BlockRow({
         style={{ width: data.width, maxWidth: "100%" }}
         className="mx-auto rounded-md"
       />
-      <HoverActions onDelete={handleDelete} onClone={handleClone} isVisible={isHovered} />
+      <HoverActions
+        onDelete={handleDelete}
+        onClone={handleClone}
+        isVisible={isHovered}
+      />
     </div>
   );
 }
