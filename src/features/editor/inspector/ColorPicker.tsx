@@ -28,7 +28,7 @@ export default function ColorPicker({
   const showTokens = mode === "tokens";
 
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="-m-1 flex flex-wrap gap-2 p-1">
       {showTokens && selectedToken !== "custom" && !hasToken ? (
         <Button
           onClick={() => onSelectToken?.("custom")}

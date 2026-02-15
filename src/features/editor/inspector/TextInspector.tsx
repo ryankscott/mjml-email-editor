@@ -125,7 +125,7 @@ export default function TextInspector({
 
         <div className="flex flex-col gap-2">
           <Label>Text style</Label>
-          <div className="flex flex-col gap-2">
+          <div className="-m-1 flex flex-col gap-2 p-1">
             {!hasTextStyle && selectedStyle !== "custom" ? (
               <Button
                 onClick={() => onChange({ textStyle: undefined })}

@@ -32,7 +32,7 @@ export default function InspectorPanel() {
   }
 
   return (
-    <div className="flex h-full flex-col gap-5 overflow-y-auto">
+    <div className="flex h-full flex-col gap-5 overflow-y-auto px-1 py-1">
       <div>
         <h2 className="text-lg font-semibold capitalize text-slate-900">
           {activeBlock.type}
